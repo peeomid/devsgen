@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// SEO metadata
+const title = "Developer Utilities";
+const description = "A collection of useful tools for developers to streamline common tasks and boost productivity.";
+
+// Define available tools
+const tools = [
+  {
+    id: "regex",
+    name: "Regex Helper",
+    description: "Transform text using regular expressions with built-in patterns or create your own.",
+    icon: "code",
+    url: "/tools/regex",
+    isNew: true
+  }
+  // More tools will be added here in the future
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Developer Utilities</h1>
+      <p class="mt-2 text-lg text-gray-600">
+        A collection of useful tools to streamline common development tasks
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {tools.map(tool => (
+        <a href={tool.url} class="group">
+          <div class="h-full p-6 bg-white rounded-lg border border-gray-200 shadow-sm hover:border-primary hover:shadow-md transition-all">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center">
+                {tool.icon === "code" && (
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                  </div>
+                )}
+                <h2 class="ml-3 text-xl font-medium text-gray-900 group-hover:text-primary transition-colors">{tool.name}</h2>
+              </div>
+              {tool.isNew && (
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  New
+                </span>
+              )}
+            </div>
+            <p class="mt-4 text-gray-600">{tool.description}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <section class="mt-16 border-t border-gray-200 pt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Dev Utils</h2>
+      <div class="prose max-w-none">
+        <p>
+          Dev Utils is a collection of tools designed to help developers streamline common tasks and boost productivity.
+          Each tool is designed with a focus on usability, performance, and keyboard-driven workflows.
+        </p>
+        <p>
+          All tools are client-side only, meaning your data never leaves your browser. No server processing, no data collection.
+        </p>
+        <h3>Features</h3>
+        <ul>
+          <li>Client-side processing for privacy and security</li>
+          <li>Keyboard shortcuts for efficient workflows</li>
+          <li>Responsive design that works on all devices</li>
+          <li>Persistent settings using localStorage</li>
+          <li>Open source and free to use</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

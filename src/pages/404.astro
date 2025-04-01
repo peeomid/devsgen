@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// SEO metadata
+const title = "Page Not Found - Developer Utilities";
+const description = "The page you're looking for doesn't exist or has been moved.";
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-6xl font-extrabold text-gray-900 mb-8">404</h1>
+      <p class="text-3xl font-bold text-gray-900 mb-4">Page not found</p>
+      <p class="text-xl text-gray-600 mb-8">The page you're looking for doesn't exist or has been moved.</p>
+      
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+          Go to Home
+        </a>
+        <a href="/tools" class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+          Browse Tools
+        </a>
+      </div>
+    </div>
+    
+    <div class="mt-16">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Looking for a tool?</h2>
+      <ul class="space-y-3">
+        <li>
+          <a href="/tools/regex" class="text-primary hover:text-blue-700 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+            Regex Helper Tool
+          </a>
+        </li>
+        <!-- More tools will be added here in the future -->
+      </ul>
+    </div>
+  </div>
+</BaseLayout>

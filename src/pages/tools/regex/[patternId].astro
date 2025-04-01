@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import RegexLayout from '../../../components/regex/RegexLayout';
+import { PatternService } from '../../../services/PatternService';
+import type { Pattern } from '../../../types/pattern';
+import builtInPatterns from '../../../data/built-in-patterns.json';
+
+export async function getStaticPaths() {
+  // Use built-in patterns for static generation
+  const patterns = builtInPatterns as Pattern[];
+  
+  return patterns.map(pattern => ({
+    params: { patternId: pattern.id },
+    props: { pattern }
+  }));
+}
+
+const { patternId } = Astro.params;
+const { pattern } = Astro.props;
+
+// SEO metadata
+const title = `${pattern.name} - Regex Helper Tool`;
+const description = pattern.description;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-8">
+      <div class="flex items-center mb-2">
+        <a href="/tools/regex" class="text-primary hover:text-blue-700 mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </a>
+        <h1 class="text-3xl font-bold text-gray-900">{pattern.name}</h1>
+      </div>
+      <p class="mt-2 text-lg text-gray-600">
+        {pattern.description}
+      </p>
+      <div class="mt-4 flex items-center text-sm text-gray-500">
+        <div class="flex items-center mr-4">
+          <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-xs mr-1">⌘K</kbd>
+          <span>to search patterns</span>
+        </div>
+        <div class="flex items-center">
+          <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-xs mr-1">⌘↵</kbd>
+          <span>to transform text</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="mb-12">
+      <RegexLayout client:load />
+    </div>
+
+    <section class="mb-12 border-t border-gray-200 pt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Pattern Details</h2>
+      <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Search Pattern</h3>
+            <pre class="bg-gray-50 p-3 rounded-md font-mono text-sm overflow-x-auto">{pattern.searchRegex}</pre>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Replace Pattern</h3>
+            <pre class="bg-gray-50 p-3 rounded-md font-mono text-sm overflow-x-auto">{pattern.replaceRegex}</pre>
+          </div>
+        </div>
+        
+        <div class="mt-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Example</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Input</h4>
+              <pre class="bg-gray-50 p-3 rounded-md font-mono text-sm overflow-x-auto">{pattern.example.input}</pre>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-700 mb-1">Output</h4>
+              <pre class="bg-gray-50 p-3 rounded-md font-mono text-sm overflow-x-auto">{pattern.example.output}</pre>
+            </div>
+          </div>
+        </div>
+        
+        {pattern.tags && pattern.tags.length > 0 && (
+          <div class="mt-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Tags</h3>
+            <div class="flex flex-wrap gap-2">
+              {pattern.tags.map((tag: string) => (
+                <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">{tag}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <section class="mb-12 border-t border-gray-200 pt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">How to Use This Pattern</h2>
+      <div class="prose max-w-none">
+        <ol>
+          <li>Enter your text in the input area above</li>
+          <li>Click "Transform" or press ⌘+Enter to apply the transformation</li>
+          <li>Copy the result from the output area</li>
+        </ol>
+        <p>
+          You can also use the command palette (⌘K) to quickly switch between different patterns.
+        </p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Related Patterns</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {builtInPatterns
+          .filter((p: Pattern) => p.id !== patternId && p.category === pattern.category)
+          .slice(0, 3)
+          .map((p: Pattern) => (
+            <a href={`/tools/regex/${p.id}`} class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+              <h3 class="font-medium text-gray-900">{p.name}</h3>
+              <p class="text-sm text-gray-500 mt-1">{p.description}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script define:vars={{ patternId }}>
+  // Initialize the pattern store and select the current pattern
+  import { initializePatternStore, selectPattern } from '../../../stores/patternStore';
+  
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', async () => {
+    await initializePatternStore();
+    selectPattern(patternId);
+  });
+</script>

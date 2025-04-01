@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PatternManager from '../../../components/regex/PatternManager';
+import PatternImportExport from '../../../components/regex/PatternImportExport';
+
+// SEO metadata
+const title = "Manage Patterns - Regex Helper Tool";
+const description = "Manage your custom regex patterns, edit existing patterns, or import/export patterns.";
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-3xl mx-auto">
+    <header class="mb-8">
+      <div class="flex items-center mb-2">
+        <a href="/tools/regex" class="text-primary hover:text-blue-700 mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </a>
+        <h1 class="text-3xl font-bold text-gray-900">Manage Patterns</h1>
+      </div>
+      <p class="mt-2 text-lg text-gray-600">
+        Manage your custom regex patterns, edit existing patterns, or import/export patterns
+      </p>
+    </header>
+
+    <div class="space-y-10">
+      <section>
+        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+          <PatternManager client:load />
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Import & Export</h2>
+        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+          <PatternImportExport client:load />
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Tips for Creating Patterns</h2>
+        <div class="prose max-w-none">
+          <p>
+            When creating regex patterns, keep these tips in mind:
+          </p>
+          <ul>
+            <li><strong>Test thoroughly</strong> - Always test your patterns with various inputs to ensure they work as expected.</li>
+            <li><strong>Use capture groups</strong> - Capture groups (parentheses) let you reference matched text in your replacement pattern.</li>
+            <li><strong>Be specific</strong> - Make your patterns as specific as possible to avoid unintended matches.</li>
+            <li><strong>Add examples</strong> - Good examples help you and others understand what the pattern does.</li>
+            <li><strong>Use descriptive names</strong> - Clear names and descriptions make patterns easier to find and use.</li>
+          </ul>
+          <p>
+            <a href="/tools/regex/create" class="text-primary hover:text-blue-700">Create a new pattern</a> or 
+            <a href="/tools/regex" class="text-primary hover:text-blue-700">return to the Regex Helper</a>.
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Initialize pattern store
+  import { initializePatternStore } from '../../../stores/patternStore';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    initializePatternStore();
+  });
+</script>

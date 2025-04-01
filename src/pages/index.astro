@@ -1,11 +1,24 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// SEO metadata
+const title = "Developer Utilities";
+const description = "A collection of useful tools for developers to streamline common tasks and boost productivity.";
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<script>
+  // Redirect to tools page
+  window.location.href = '/tools';
+</script>
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto py-12">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Developer Utilities</h1>
+      <p class="text-xl text-gray-600 mb-8">A collection of useful tools for developers</p>
+      <a href="/tools" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        Explore Tools
+      </a>
+    </div>
+  </div>
+</BaseLayout>

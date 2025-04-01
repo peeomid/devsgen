@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PatternForm from '../../../components/regex/PatternForm';
+
+// SEO metadata
+const title = "Create Pattern - Regex Helper Tool";
+const description = "Create a new custom regex pattern for text transformation.";
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-3xl mx-auto">
+    <header class="mb-8">
+      <div class="flex items-center mb-2">
+        <a href="/tools/regex" class="text-primary hover:text-blue-700 mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </a>
+        <h1 class="text-3xl font-bold text-gray-900">Create Pattern</h1>
+      </div>
+      <p class="mt-2 text-lg text-gray-600">
+        Create a new custom regex pattern for text transformation
+      </p>
+    </header>
+
+    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+      <PatternForm client:load onSave={() => {}} />
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Handle form submission success
+    window.addEventListener('pattern:created', () => {
+      // Redirect to the patterns page
+      window.location.href = '/tools/regex';
+    });
+  });
+</script>

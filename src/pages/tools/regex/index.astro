@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import RegexLayout from '../../../components/regex/RegexLayout';
+import PatternImportExport from '../../../components/regex/PatternImportExport';
+
+// SEO metadata
+const title = "Regex Helper Tool";
+const description = "Transform and manipulate text with regular expressions. Use built-in patterns or create your own custom regex transformations.";
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Regex Helper Tool</h1>
+      <p class="mt-2 text-lg text-gray-600">
+        Transform text using regular expressions with built-in patterns or create your own
+      </p>
+      <div class="mt-4 flex items-center text-sm text-gray-500">
+        <div class="flex items-center mr-4">
+          <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-xs mr-1">⌘K</kbd>
+          <span>to search patterns</span>
+        </div>
+        <div class="flex items-center">
+          <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-xs mr-1">⌘↵</kbd>
+          <span>to transform text</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="mb-12">
+      <RegexLayout client:load />
+    </div>
+
+    <section class="mb-12 border-t border-gray-200 pt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Manage Patterns</h2>
+      <PatternImportExport client:load />
+    </section>
+
+    <section class="mb-12 border-t border-gray-200 pt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Regex Helper</h2>
+      <div class="prose max-w-none">
+        <p>
+          The Regex Helper Tool allows you to transform text using regular expressions. 
+          It comes with a set of built-in patterns for common transformations, and you can 
+          create your own custom patterns.
+        </p>
+        <h3>Features</h3>
+        <ul>
+          <li>Built-in patterns for common transformations</li>
+          <li>Create and save your own custom patterns</li>
+          <li>Import and export patterns to share with others</li>
+          <li>Keyboard shortcuts for efficient workflow</li>
+          <li>Command palette for quick pattern search (⌘K)</li>
+        </ul>
+        <h3>How to Use</h3>
+        <ol>
+          <li>Select a pattern from the list or search using the command palette (⌘K)</li>
+          <li>Enter your text in the input area</li>
+          <li>Click "Transform" or press ⌘+Enter to apply the transformation</li>
+          <li>Copy the result from the output area</li>
+        </ol>
+        <h3>Creating Custom Patterns</h3>
+        <p>
+          You can create your own custom patterns by clicking the "Create Pattern" button. 
+          Each pattern consists of:
+        </p>
+        <ul>
+          <li><strong>Name:</strong> A descriptive name for the pattern</li>
+          <li><strong>Description:</strong> A brief explanation of what the pattern does</li>
+          <li><strong>Search Regex:</strong> The regular expression pattern to search for</li>
+          <li><strong>Replace Regex:</strong> The replacement pattern</li>
+          <li><strong>Example:</strong> An example input and expected output</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  // Initialize the pattern store when the page loads
+  import { initializePatternStore } from '../../../stores/patternStore';
+  
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    initializePatternStore();
+  });
+</script>

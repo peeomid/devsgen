@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom global styles */
+:root {
+  --color-primary: #3B82F6;
+  --color-secondary: #6B7280;
+  --color-success: #10B981;
+  --color-error: #EF4444;
+  --color-background: #F9FAFB;
+  --color-text: #1F2937;
+  --color-accent: #DBEAFE;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-text;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  @apply outline-2 outline-primary outline-offset-2;
+}
+
+/* Keyboard shortcut indicator */
+.shortcut-hint {
+  @apply inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-mono rounded bg-gray-100 text-gray-800 border border-gray-300;
+}
+
+/* Utility classes */
+.monospace {
+  @apply font-mono;
+}
+
+/* Dark mode support */
+.dark {
+  --color-primary: #60A5FA;
+  --color-secondary: #9CA3AF;
+  --color-success: #34D399;
+  --color-error: #F87171;
+  --color-background: #111827;
+  --color-text: #F9FAFB;
+  --color-accent: #1E40AF;
+}
+
+/* Skip navigation for accessibility */
+.skip-nav {
+  @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-primary focus:font-medium focus:rounded focus:shadow;
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Toast notifications */
+.toast {
+  @apply fixed right-4 bottom-4 px-4 py-3 rounded-md shadow-lg z-50 fade-in;
+}
+
+.toast-success {
+  @apply bg-success text-white;
+}
+
+.toast-error {
+  @apply bg-error text-white;
+}
+
+.toast-info {
+  @apply bg-primary text-white;
+}
+
+/* Command palette styles */
+.command-palette {
+  @apply fixed inset-0 z-50 flex items-start justify-center pt-[20vh] px-4 bg-black/50;
+}
+
+.command-palette-content {
+  @apply w-full max-w-xl bg-white rounded-lg shadow-xl overflow-hidden slide-in;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    @apply hidden;
+  }
+}
+
+@media (min-width: 769px) {
+  .hide-on-desktop {
+    @apply hidden;
+  }
+}

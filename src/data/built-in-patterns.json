@@ -1,0 +1,172 @@
+[
+  {
+    "id": "path-dot-to-slash",
+    "name": "Path: Dot to Slash",
+    "description": "Convert dot notation paths to slash notation (e.g., app.services.user → app/services/user)",
+    "category": "Format Conversion",
+    "searchRegex": "\\.",
+    "replaceRegex": "/",
+    "flags": "g",
+    "example": {
+      "input": "app.services.user",
+      "output": "app/services/user"
+    },
+    "isBuiltIn": true,
+    "tags": ["path", "conversion", "dot notation"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "path-slash-to-dot",
+    "name": "Path: Slash to Dot",
+    "description": "Convert slash notation paths to dot notation (e.g., app/services/user → app.services.user)",
+    "category": "Format Conversion",
+    "searchRegex": "/",
+    "replaceRegex": ".",
+    "flags": "g",
+    "example": {
+      "input": "app/services/user",
+      "output": "app.services.user"
+    },
+    "isBuiltIn": true,
+    "tags": ["path", "conversion", "dot notation"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "camel-to-kebab",
+    "name": "CamelCase to kebab-case",
+    "description": "Convert camelCase strings to kebab-case (e.g., myVariableName → my-variable-name)",
+    "category": "Format Conversion",
+    "searchRegex": "([a-z])([A-Z])",
+    "replaceRegex": "$1-$2",
+    "flags": "g",
+    "example": {
+      "input": "myVariableName",
+      "output": "my-variable-name"
+    },
+    "isBuiltIn": true,
+    "tags": ["case conversion", "camelCase", "kebab-case"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "kebab-to-camel",
+    "name": "kebab-case to camelCase",
+    "description": "Convert kebab-case strings to camelCase (e.g., my-variable-name → myVariableName)",
+    "category": "Format Conversion",
+    "searchRegex": "-([a-z])",
+    "replaceRegex": "$1",
+    "flags": "g",
+    "example": {
+      "input": "my-variable-name",
+      "output": "myVariableName"
+    },
+    "isBuiltIn": true,
+    "tags": ["case conversion", "camelCase", "kebab-case"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "extract-urls",
+    "name": "Extract URLs",
+    "description": "Extract all URLs from text",
+    "category": "Text Extraction",
+    "searchRegex": "(https?://[^\\s]+)",
+    "replaceRegex": "$1\n",
+    "flags": "g",
+    "example": {
+      "input": "Visit https://example.com and https://test.com for more information.",
+      "output": "https://example.com\nhttps://test.com\n"
+    },
+    "isBuiltIn": true,
+    "tags": ["extraction", "url", "web"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "extract-emails",
+    "name": "Extract Email Addresses",
+    "description": "Extract all email addresses from text",
+    "category": "Text Extraction",
+    "searchRegex": "([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})",
+    "replaceRegex": "$1\n",
+    "flags": "g",
+    "example": {
+      "input": "Contact john.doe@example.com or jane@test.co.uk for support.",
+      "output": "john.doe@example.com\njane@test.co.uk\n"
+    },
+    "isBuiltIn": true,
+    "tags": ["extraction", "email", "contact"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "comma-to-newline",
+    "name": "Comma to Newline",
+    "description": "Convert comma-separated values to newline-separated values",
+    "category": "Format Conversion",
+    "searchRegex": ",\\s*",
+    "replaceRegex": "\n",
+    "flags": "g",
+    "example": {
+      "input": "apple, banana, cherry, date",
+      "output": "apple\nbanana\ncherry\ndate"
+    },
+    "isBuiltIn": true,
+    "tags": ["list", "conversion", "csv"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "newline-to-comma",
+    "name": "Newline to Comma",
+    "description": "Convert newline-separated values to comma-separated values",
+    "category": "Format Conversion",
+    "searchRegex": "\\n",
+    "replaceRegex": ", ",
+    "flags": "g",
+    "example": {
+      "input": "apple\nbanana\ncherry\ndate",
+      "output": "apple, banana, cherry, date"
+    },
+    "isBuiltIn": true,
+    "tags": ["list", "conversion", "csv"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "add-quotes",
+    "name": "Add Quotes to Lines",
+    "description": "Add double quotes around each line",
+    "category": "Code Formatting",
+    "searchRegex": "^(.+)$",
+    "replaceRegex": "\"$1\"",
+    "flags": "gm",
+    "example": {
+      "input": "apple\nbanana\ncherry",
+      "output": "\"apple\"\n\"banana\"\n\"cherry\""
+    },
+    "isBuiltIn": true,
+    "tags": ["quotes", "formatting", "code"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "remove-quotes",
+    "name": "Remove Quotes from Lines",
+    "description": "Remove double quotes from the beginning and end of each line",
+    "category": "Code Formatting",
+    "searchRegex": "^\"(.+)\"$",
+    "replaceRegex": "$1",
+    "flags": "gm",
+    "example": {
+      "input": "\"apple\"\n\"banana\"\n\"cherry\"",
+      "output": "apple\nbanana\ncherry"
+    },
+    "isBuiltIn": true,
+    "tags": ["quotes", "formatting", "code"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  }
+]

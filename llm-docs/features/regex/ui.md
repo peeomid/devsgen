@@ -316,6 +316,8 @@ The Regex Helper Tool will implement a responsive hybrid layout that combines th
 
 #### Large Screen (Split View)
 ```
++---------------------------------------------------+
+|           Toolbar with Pattern Selection           |
 +---------------------+-------------+----------------+
 |                     |             |                |
 |                     |  Transform  |                |
@@ -325,8 +327,6 @@ The Regex Helper Tool will implement a responsive hybrid layout that combines th
 |                     |             |                |
 |                     |   Clear     |                |
 +---------------------+-------------+----------------+
-|           Toolbar with Pattern Selection           |
-+---------------------------------------------------+
 ```
 
 #### Small Screen (Stacked View)
