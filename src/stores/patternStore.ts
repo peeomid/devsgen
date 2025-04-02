@@ -62,9 +62,17 @@ export async function initializePatternStore(): Promise<void> {
     // Register patterns with regex service
     regexService.registerPatterns(patterns);
     
-    // Select first pattern if available
-    if (patterns.length > 0) {
-      selectedPatternIdStore.set(patterns[0].id);
+    // Try to load previously selected pattern from localStorage
+    if (typeof window !== 'undefined' && patterns.length > 0) {
+      const savedPatternId = localStorage.getItem('regex_selected_pattern');
+      
+      if (savedPatternId && patterns.some(p => p.id === savedPatternId)) {
+        // If the saved pattern exists in our patterns, select it
+        selectedPatternIdStore.set(savedPatternId);
+      } else {
+        // Otherwise select the first pattern
+        selectedPatternIdStore.set(patterns[0].id);
+      }
     }
   } catch (error) {
     console.error('Error initializing pattern store:', error);

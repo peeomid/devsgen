@@ -16,7 +16,7 @@ export interface InputAreaHandle {
 const InputArea = forwardRef<InputAreaHandle, InputAreaProps>(({ 
   value, 
   onChange, 
-  placeholder = 'Enter text to transform...', 
+  placeholder = 'Enter text to transform... (⌘1 to focus)', 
   disabled = false,
   onTransform
 }: InputAreaProps, ref) => {
@@ -44,9 +44,6 @@ const InputArea = forwardRef<InputAreaHandle, InputAreaProps>(({
     if (typeof window === 'undefined') return;
     
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle if textarea is focused
-      if (document.activeElement !== textareaRef.current) return;
-      
       // Cmd/Ctrl + Enter to transform
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && onTransform) {
         e.preventDefault();
@@ -98,6 +95,7 @@ const InputArea = forwardRef<InputAreaHandle, InputAreaProps>(({
         className="w-full h-full min-h-[200px] p-4 font-mono text-sm resize-y rounded-md focus:outline-none"
         spellCheck={false}
         aria-label="Input text"
+        title="Input area (⌘1 to focus)"
       />
       
       {onTransform && (

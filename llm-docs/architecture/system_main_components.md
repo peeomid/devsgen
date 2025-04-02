@@ -80,24 +80,69 @@ export const uiStateStore = map<{
 
 ### 3. UI Components
 
-#### RegexLayout (`RegexLayout.tsx`)
-- Main component for the Regex Helper Tool
+#### Component Hierarchy
+
+The Regex Helper Tool follows a hierarchical component structure. Below is a tree representation of how components are organized:
+
+```
+BaseLayout (Astro)                  # Main site layout with header, footer, etc.
+└── RegexLayout                      # Main container for the Regex Helper Tool
+    ├── PatternInfo                  # Displays selected pattern details
+    ├── InputArea                    # Text input component
+    │   └── ActionButtons            # Transform and create pattern buttons
+    ├── OutputArea                   # Result display component
+    └── CommandPalette               # Pattern search overlay (⌘+K)
+        └── PatternList              # List of patterns in command palette
+
+PatternImportExport                 # Standalone component for pattern import/export
+
+PatternForm                         # Standalone component for pattern creation/editing
+└── PatternValidator                # Validates regex patterns
+
+PatternManager                      # Standalone component for managing patterns
+└── PatternList                     # List of user patterns
+    └── PatternItem                 # Individual pattern with edit/delete options
+```
+
+#### Main Components
+
+##### RegexLayout (`RegexLayout.tsx`)
+- Main container component for the Regex Helper Tool
 - Orchestrates the interaction between input, output, and pattern selection
 - Manages layout switching between horizontal and vertical modes
+- Handles keyboard shortcuts and state management
 
-#### Input and Output
+##### Input and Output
 - **InputArea**: Text input with auto-resize and keyboard shortcuts
+  - Handles text entry and transformation triggers
+  - Supports keyboard shortcuts (⌘+Enter to transform)
 - **OutputArea**: Result display with execution time and error handling
+  - Shows transformation results
+  - Displays execution time and any errors
+  - Provides copy-to-clipboard functionality
 
-#### Pattern Selection
+##### Pattern Selection
 - **CommandPalette**: Keyboard-driven pattern search (⌘+K)
+  - Overlay component for quick pattern search
+  - Keyboard navigation support
+  - Fuzzy search functionality
 - **PatternSelector**: Visual browsing of patterns by category
+  - Categorized display of available patterns
+  - Filtering by category
 - **PatternInfo**: Displays details about the selected pattern
+  - Shows pattern name, description, and example
+  - Displays regex details and flags
 
-#### Pattern Management
+##### Pattern Management
 - **PatternForm**: Create and edit patterns
+  - Form for pattern creation and editing
+  - Validation of regex patterns
 - **PatternImportExport**: Import/export patterns as JSON
+  - Export user patterns as JSON
+  - Import patterns from JSON file
 - **PatternManager**: List, edit, and delete user patterns
+  - CRUD operations for user patterns
+  - Confirmation dialogs for deletion
 
 ### 4. Routing and Pages
 
@@ -114,57 +159,101 @@ export const uiStateStore = map<{
 - Pattern creation and management pages
 - 404 page for better user experience
 
-## Data Flow
+## Component Interactions and Data Flow
+
+### Page Structure
+
+The main Regex Helper Tool page (`/tools/regex/index.astro`) is structured as follows:
+
+```
+<BaseLayout>
+  <header>
+    <!-- Title, description, keyboard shortcuts info -->
+  </header>
+  
+  <RegexLayout client:load />
+  
+  <section>
+    <PatternImportExport client:load />
+  </section>
+  
+  <section>
+    <!-- About section with features and instructions -->
+  </section>
+</BaseLayout>
+```
+
+### Data Flow
 
 1. **Pattern Loading**:
-   - On initial load, `PatternService` fetches built-in patterns and user patterns
+   - On initial page load, the script calls `initializePatternStore()`
+   - `PatternService` fetches built-in patterns from JSON and user patterns from localStorage
    - Patterns are stored in `patternsStore` and registered with `RegexService`
+   - If patterns exist, the first pattern is automatically selected
 
 2. **Pattern Selection**:
-   - User selects a pattern via CommandPalette or PatternSelector
+   - User selects a pattern via CommandPalette (⌘+K) or PatternSelector
    - Selected pattern ID is stored in `selectedPatternIdStore`
-   - RegexLayout updates to display pattern info
+   - RegexLayout observes this store and updates to display pattern info
+   - InputArea is focused and text is selected for immediate editing
 
 3. **Text Transformation**:
    - User enters text in InputArea
-   - On transform action (⌘+Enter), `transformText` function is called
+   - On transform action (⌘+Enter or button click), `transformText` function is called
+   - `transformationStore` sets `isProcessing` to true
    - `RegexService` applies the selected pattern to transform the text
-   - Result is stored in `transformationStore` and displayed in OutputArea
+   - Result is stored in `transformationStore` with output, execution time, and any errors
+   - OutputArea observes this store and updates to display the results
 
 4. **Pattern Management**:
-   - User creates/edits patterns via PatternForm
-   - PatternService saves to localStorage
-   - Patterns are immediately available for use
+   - User creates/edits patterns via PatternForm on dedicated pages
+   - PatternService validates and saves to localStorage via PatternStorageManager
+   - User can import/export patterns via PatternImportExport component
+   - Patterns are immediately available for use after creation/import
+
+### Component Communication
+
+Components communicate primarily through Nanostores:
+
+- **patternsStore**: Shared by all components that need access to patterns
+- **selectedPatternIdStore**: Used to track the currently selected pattern
+- **transformationStore**: Manages the transformation input, output, and state
+- **uiStateStore**: Controls UI elements like command palette visibility and layout
+
+This store-based approach allows components to remain decoupled while sharing state.
 
 ## Main Files and Their Functions
 
 ### Services
 
-| File | Path | Function |
-|------|------|----------|
-| `RegexService.ts` | `/src/services/RegexService.ts` | Core service for regex transformations and validation |
-| `PatternService.ts` | `/src/services/PatternService.ts` | Manages pattern data and storage operations |
-| `PatternStorageManager.ts` | `/src/services/PatternStorageManager.ts` | Handles localStorage operations for patterns |
+| File | Path | Function | Parent/Dependencies |
+|------|------|----------|---------------------|
+| `RegexService.ts` | `/src/services/RegexService.ts` | Core service for regex transformations and validation | Used by patternStore |
+| `PatternService.ts` | `/src/services/PatternService.ts` | Manages pattern data and storage operations | Uses PatternStorageManager |
+| `PatternStorageManager.ts` | `/src/services/PatternStorageManager.ts` | Handles localStorage operations for patterns | Used by PatternService |
 
 ### Stores
 
-| File | Path | Function |
-|------|------|----------|
-| `patternStore.ts` | `/src/stores/patternStore.ts` | Central state management for patterns and UI state |
+| File | Path | Function | Dependencies |
+|------|------|----------|-------------|
+| `patternStore.ts` | `/src/stores/patternStore.ts` | Central state management for patterns and UI state | Uses RegexService, PatternService |
 
 ### Components
 
-| File | Path | Function |
-|------|------|----------|
-| `RegexLayout.tsx` | `/src/components/regex/RegexLayout.tsx` | Main layout for the Regex Helper Tool |
-| `InputArea.tsx` | `/src/components/regex/InputArea.tsx` | Text input component with auto-resize |
-| `OutputArea.tsx` | `/src/components/regex/OutputArea.tsx` | Result display component |
-| `CommandPalette.tsx` | `/src/components/regex/CommandPalette.tsx` | Keyboard-driven pattern search (⌘+K) |
-| `PatternSelector.tsx` | `/src/components/regex/PatternSelector.tsx` | Visual pattern browsing by category |
-| `PatternInfo.tsx` | `/src/components/regex/PatternInfo.tsx` | Displays pattern details |
-| `PatternForm.tsx` | `/src/components/regex/PatternForm.tsx` | Form for creating/editing patterns |
-| `PatternImportExport.tsx` | `/src/components/regex/PatternImportExport.tsx` | Import/export patterns as JSON |
-| `ActionButtons.tsx` | `/src/components/regex/ActionButtons.tsx` | Action buttons for transformations |
+| File | Path | Function | Parent Component |
+|------|------|----------|------------------|
+| `RegexLayout.tsx` | `/src/components/regex/RegexLayout.tsx` | Main layout for the Regex Helper Tool | BaseLayout (Astro) |
+| `InputArea.tsx` | `/src/components/regex/InputArea.tsx` | Text input component with auto-resize | RegexLayout |
+| `OutputArea.tsx` | `/src/components/regex/OutputArea.tsx` | Result display component | RegexLayout |
+| `CommandPalette.tsx` | `/src/components/regex/CommandPalette.tsx` | Keyboard-driven pattern search (⌘+K) | RegexLayout |
+| `PatternSelector.tsx` | `/src/components/regex/PatternSelector.tsx` | Visual pattern browsing by category | Standalone/Various |
+| `PatternInfo.tsx` | `/src/components/regex/PatternInfo.tsx` | Displays pattern details | RegexLayout |
+| `PatternForm.tsx` | `/src/components/regex/PatternForm.tsx` | Form for creating/editing patterns | Standalone (create.astro) |
+| `PatternImportExport.tsx` | `/src/components/regex/PatternImportExport.tsx` | Import/export patterns as JSON | BaseLayout (index.astro) |
+| `ActionButtons.tsx` | `/src/components/regex/ActionButtons.tsx` | Action buttons for transformations | InputArea |
+| `PatternList.tsx` | `/src/components/regex/PatternList.tsx` | List of patterns | CommandPalette, PatternManager |
+| `PatternItem.tsx` | `/src/components/regex/PatternItem.tsx` | Individual pattern with actions | PatternList |
+| `PatternValidator.tsx` | `/src/components/regex/PatternValidator.tsx` | Validates regex patterns | PatternForm |
 
 ### Pages
 
