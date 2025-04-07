@@ -12,6 +12,13 @@ export default function PatternImportExport() {
   const [importResult, setImportResult] = useState<PatternImportResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   
+  // Handle create pattern navigation
+  const handleCreatePattern = () => {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/tools/regex/create';
+    }
+  };
+  
   // Handle import
   const handleImport = async () => {
     setError(null);
@@ -65,6 +72,21 @@ export default function PatternImportExport() {
   
   return (
     <div className="space-y-6">
+      {/* Header with Create Pattern button */}
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-medium">Pattern Management</h3>
+        <button
+          onClick={handleCreatePattern}
+          className="flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100"
+          title="Create a new pattern"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Create Pattern
+        </button>
+      </div>
+      
       {/* Import section */}
       <div>
         <div className="flex justify-between items-center mb-2">

@@ -70,9 +70,14 @@ export class PatternService {
     // Generate a unique ID
     const id = this.generatePatternId(patternInput.name);
     
+    // Generate a unique key number
+    const keyNumber = this.generateNextKeyNumber();
+    
     // Create the pattern
     const newPattern: Pattern = {
       id,
+      keyNumber,
+      shortKeys: patternInput.shortKeys || [],
       ...patternInput,
       tags: patternInput.tags || [],
       isBuiltIn: false,
@@ -181,13 +186,43 @@ export class PatternService {
     
     const normalizedQuery = query.toLowerCase();
     
-    // Search in name, description, and tags
+    // Check if query is a number (key number)
+    const isNumeric = /^\d+$/.test(normalizedQuery);
+    
+    // Prioritize exact matches for key numbers and short keys
+    if (isNumeric) {
+      const keyNumber = parseInt(normalizedQuery, 10);
+      const exactMatch = this.patterns.find(pattern => pattern.keyNumber === keyNumber);
+      
+      if (exactMatch) {
+        return {
+          patterns: [exactMatch],
+          query
+        };
+      }
+    }
+    
+    // Check for exact matches on short keys
+    const shortKeyMatches = this.patterns.filter(pattern => 
+      pattern.shortKeys.some(key => key.toLowerCase() === normalizedQuery)
+    );
+    
+    if (shortKeyMatches.length > 0) {
+      return {
+        patterns: shortKeyMatches,
+        query
+      };
+    }
+    
+    // If no exact matches, search in all fields including short keys
     const matchedPatterns = this.patterns.filter(pattern => {
       return (
         pattern.name.toLowerCase().includes(normalizedQuery) ||
         pattern.description.toLowerCase().includes(normalizedQuery) ||
         pattern.tags.some(tag => tag.toLowerCase().includes(normalizedQuery)) ||
-        pattern.category.toLowerCase().includes(normalizedQuery)
+        pattern.category.toLowerCase().includes(normalizedQuery) ||
+        pattern.shortKeys.some(key => key.toLowerCase().includes(normalizedQuery)) ||
+        (isNumeric && pattern.keyNumber.toString().includes(normalizedQuery))
       );
     });
     
@@ -242,55 +277,89 @@ export class PatternService {
   }
   
   /**
-   * Validate a pattern
+   * Validate pattern input data
    */
-  public validatePattern(pattern: PatternInput | Pattern): PatternValidationResult {
-    const errors = [];
-    
-    // Check required fields
-    if (!pattern.name || pattern.name.trim().length === 0) {
-      errors.push({ field: 'name', message: 'Name is required' });
+  private validatePattern(patternInput: PatternInput | Pattern): PatternValidationResult {
+    const errors: { field: string; message: string }[] = [];
+
+    // Basic field validation
+    if (!patternInput.name?.trim()) {
+      errors.push({ field: 'name', message: 'Pattern name is required' });
     }
-    
-    if (!pattern.description || pattern.description.trim().length === 0) {
-      errors.push({ field: 'description', message: 'Description is required' });
+    if (!patternInput.description?.trim()) {
+      errors.push({ field: 'description', message: 'Pattern description is required' });
     }
-    
-    if (!pattern.searchRegex || pattern.searchRegex.trim().length === 0) {
-      errors.push({ field: 'searchRegex', message: 'Search regex is required' });
+
+    // Short key validation
+    if (patternInput.shortKeys && patternInput.shortKeys.length > 0) {
+      const uniqueShortKeys = new Set<string>();
+      for (const key of patternInput.shortKeys) {
+        if (!key) continue; // Skip empty keys if allowed
+        const lowerKey = key.toLowerCase();
+        
+        if (key.length > 3) {
+          errors.push({ field: 'shortKeys', message: `Short key '${key}' exceeds maximum length of 3 characters` });
+        }
+        if (!/^[a-z0-9]+$/i.test(key)) { // Allow uppercase alphanumeric too
+          errors.push({ field: 'shortKeys', message: `Short key '${key}' must contain only alphanumeric characters` });
+        }
+        
+        // Check for uniqueness within the pattern being validated
+        if (uniqueShortKeys.has(lowerKey)) {
+           errors.push({ field: 'shortKeys', message: `Duplicate short key '${key}' within the same pattern` });
+        }
+        uniqueShortKeys.add(lowerKey);
+
+        // Check for uniqueness across all patterns (excluding the pattern being edited, if applicable)
+        const patternId = 'id' in patternInput ? patternInput.id : undefined;
+        const existingPatternWithKey = this.patterns.find(p => p.id !== patternId && p.shortKeys.some(sk => sk.toLowerCase() === lowerKey));
+        if (existingPatternWithKey) {
+          errors.push({ field: 'shortKeys', message: `Short key '${key}' is already used by pattern '${existingPatternWithKey.name}'` });
+        }
+      }
     }
-    
-    if (!pattern.example || !pattern.example.input || !pattern.example.output) {
-      errors.push({ field: 'example', message: 'Example input and output are required' });
-    }
-    
+
     // Validate regex syntax
-    try {
-      new RegExp(pattern.searchRegex);
-    } catch (error) {
-      errors.push({ field: 'searchRegex', message: 'Invalid search regex syntax' });
+    if ('searchRegex' in patternInput && patternInput.searchRegex) { 
+      try {
+        new RegExp(patternInput.searchRegex, patternInput.flags || ''); // Use flags if available
+      } catch (error) {
+        errors.push({ field: 'searchRegex', message: `Invalid search regex: ${error instanceof Error ? error.message : 'Unknown error'}` });
+      }
     }
-    
+    // TODO: Add validation for replaceRegex if needed
+
     return {
       isValid: errors.length === 0,
       errors: errors.length > 0 ? errors : undefined
     };
   }
-  
+
   /**
-   * Generate a pattern ID from name
+   * Generate a unique pattern ID based on the name
    */
   private generatePatternId(name: string): string {
-    // Create a slug from the name
-    const slug = name
+    const base = name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
     
-    // Add a unique suffix
-    const uniqueSuffix = nanoid(6);
+    const timestamp = Date.now().toString(36);
     
-    return `${slug}-${uniqueSuffix}`;
+    return `${base}-${timestamp}`;
+  }
+  
+  /**
+   * Generate the next key number for a new pattern
+   * This finds the highest existing key number and adds 1
+   */
+  private generateNextKeyNumber(): number {
+    if (this.patterns.length === 0) {
+      return 1; // Start with 1 if no patterns exist
+    }
+    
+    const highestKeyNumber = Math.max(...this.patterns.map(p => p.keyNumber || 0));
+    return highestKeyNumber + 1;
   }
   
   /**

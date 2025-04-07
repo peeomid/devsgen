@@ -1,6 +1,8 @@
 [
   {
     "id": "path-dot-to-slash",
+    "keyNumber": 1,
+    "shortKeys": ["d2s", "dot"],
     "name": "Path: Dot to Slash",
     "description": "Convert dot notation paths to slash notation (e.g., app.services.user → app/services/user)",
     "category": "Format Conversion",
@@ -18,6 +20,8 @@
   },
   {
     "id": "path-slash-to-dot",
+    "keyNumber": 2,
+    "shortKeys": ["s2d", "sla"],
     "name": "Path: Slash to Dot",
     "description": "Convert slash notation paths to dot notation (e.g., app/services/user → app.services.user)",
     "category": "Format Conversion",
@@ -35,6 +39,8 @@
   },
   {
     "id": "camel-to-kebab",
+    "keyNumber": 3,
+    "shortKeys": ["c2k", "cam"],
     "name": "CamelCase to kebab-case",
     "description": "Convert camelCase strings to kebab-case (e.g., myVariableName → my-variable-name)",
     "category": "Format Conversion",
@@ -52,6 +58,8 @@
   },
   {
     "id": "kebab-to-camel",
+    "keyNumber": 4,
+    "shortKeys": ["k2c", "keb"],
     "name": "kebab-case to camelCase",
     "description": "Convert kebab-case strings to camelCase (e.g., my-variable-name → myVariableName)",
     "category": "Format Conversion",
@@ -69,6 +77,8 @@
   },
   {
     "id": "extract-urls",
+    "keyNumber": 5,
+    "shortKeys": ["url", "ext"],
     "name": "Extract URLs",
     "description": "Extract all URLs from text",
     "category": "Text Extraction",
@@ -86,6 +96,8 @@
   },
   {
     "id": "extract-emails",
+    "keyNumber": 6,
+    "shortKeys": ["eml", "em"],
     "name": "Extract Email Addresses",
     "description": "Extract all email addresses from text",
     "category": "Text Extraction",
@@ -103,6 +115,8 @@
   },
   {
     "id": "comma-to-newline",
+    "keyNumber": 7,
+    "shortKeys": ["c2n", "com"],
     "name": "Comma to Newline",
     "description": "Convert comma-separated values to newline-separated values",
     "category": "Format Conversion",
@@ -120,6 +134,8 @@
   },
   {
     "id": "newline-to-comma",
+    "keyNumber": 8,
+    "shortKeys": ["n2c", "nl"],
     "name": "Newline to Comma",
     "description": "Convert newline-separated values to comma-separated values",
     "category": "Format Conversion",
@@ -137,6 +153,8 @@
   },
   {
     "id": "add-quotes",
+    "keyNumber": 9,
+    "shortKeys": ["aq", "quo"],
     "name": "Add Quotes to Lines",
     "description": "Add double quotes around each line",
     "category": "Code Formatting",
@@ -154,6 +172,8 @@
   },
   {
     "id": "remove-quotes",
+    "keyNumber": 10,
+    "shortKeys": ["rq", "rmq"],
     "name": "Remove Quotes from Lines",
     "description": "Remove double quotes from the beginning and end of each line",
     "category": "Code Formatting",

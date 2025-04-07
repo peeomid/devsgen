@@ -109,7 +109,7 @@ const OutputArea = forwardRef<OutputAreaHandle, OutputAreaProps>(({
         <button
           onClick={handleCopy}
           disabled={isLoading || !value || !!error}
-          className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-3 py-1 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+          className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
           aria-label="Copy to clipboard"
         >
           {isCopied ? (

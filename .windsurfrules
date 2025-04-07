@@ -1,0 +1,32 @@
+## Technical Stack
+
+## Guide
+- You need to update file @llm-docs/architecture/system_main_components.md if you make any major changes to the architecture or components
+
+### Core Technologies
+- **Astro**: Server-side rendering framework with islands architecture
+- **React**: UI component library for interactive elements
+- **TypeScript**: Type-safe JavaScript for better developer experience
+- **Tailwind CSS**: Utility-first CSS framework for styling
+- **Nanostores**: Lightweight state management for cross-component communication
+
+
+### Component Structure
+
+```
+dev-utils/
+├── src/                         # Source code
+│   ├── components/              # UI components
+│   │   ├── common/              # Shared components
+│   │   └── regex/               # Regex tool components
+│   ├── layouts/                 # Page layouts
+│   ├── pages/                   # Astro pages (routes)
+│   │   ├── tools/               # Tool-specific pages
+│   │   │   └── regex/           # Regex tool pages
+│   ├── services/                # Business logic services
+│   ├── stores/                  # State management
+│   ├── types/                   # TypeScript type definitions
+│   └── utils/                   # Utility functions
+├── public/                      # Static assets
+└── llm-docs/                    # Documentation
+```

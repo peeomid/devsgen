@@ -35,11 +35,13 @@ export default function PatternForm({ initialPattern, onSave, onCancel }: Patter
       output: ''
     },
     tags: [],
+    shortKeys: [],
     isBuiltIn: false
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [tagInput, setTagInput] = useState('');
+  const [shortKeyInput, setShortKeyInput] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
   const [testError, setTestError] = useState<string | null>(null);
@@ -103,6 +105,51 @@ export default function PatternForm({ initialPattern, onSave, onCancel }: Patter
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.filter(t => t !== tag)
+    }));
+  };
+  
+  // Add a short key
+  const handleAddShortKey = () => {
+    if (!shortKeyInput.trim()) return;
+    
+    const newShortKey = shortKeyInput.trim();
+    
+    // Validate short key (max 3 characters, alphanumeric)
+    if (newShortKey.length > 3) {
+      setErrors(prev => ({
+        ...prev,
+        shortKey: 'Short keys must be 3 characters or less'
+      }));
+      return;
+    }
+    
+    if (!/^[a-zA-Z0-9]+$/.test(newShortKey)) {
+      setErrors(prev => ({
+        ...prev,
+        shortKey: 'Short keys must be alphanumeric'
+      }));
+      return;
+    }
+    
+    if (!formData.shortKeys.includes(newShortKey)) {
+      setFormData(prev => ({
+        ...prev,
+        shortKeys: [...prev.shortKeys, newShortKey]
+      }));
+      setErrors(prev => ({
+        ...prev,
+        shortKey: ''
+      }));
+    }
+    
+    setShortKeyInput('');
+  };
+  
+  // Remove a short key
+  const handleRemoveShortKey = (key: string) => {
+    setFormData(prev => ({
+      ...prev,
+      shortKeys: prev.shortKeys.filter(k => k !== key)
     }));
   };
   
@@ -396,6 +443,68 @@ export default function PatternForm({ initialPattern, onSave, onCancel }: Patter
                   className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500 focus:outline-none"
                 >
                   <span className="sr-only">Remove tag {tag}</span>
+                  <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                    <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
+                  </svg>
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      
+      {/* Short Keys */}
+      <div>
+        <label htmlFor="shortKeys" className="block text-sm font-medium text-gray-700">
+          Short Keys (max 3 characters each)
+        </label>
+        <div className="mt-1 flex rounded-md shadow-sm">
+          <input
+            type="text"
+            id="shortKeys"
+            value={shortKeyInput}
+            onChange={(e) => setShortKeyInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddShortKey();
+              }
+            }}
+            className="block w-full rounded-none rounded-l-md border border-gray-300 focus:border-primary focus:ring-primary sm:text-sm"
+            placeholder="Add a short key"
+            maxLength={3}
+          />
+          <button
+            type="button"
+            onClick={handleAddShortKey}
+            className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm"
+          >
+            Add
+          </button>
+        </div>
+        
+        {errors.shortKey && (
+          <p className="mt-1 text-sm text-red-600">{errors.shortKey}</p>
+        )}
+        
+        <p className="mt-1 text-xs text-gray-500">
+          Short keys are used for quick access to patterns. They must be alphanumeric and maximum 3 characters.
+        </p>
+        
+        {formData.shortKeys.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {formData.shortKeys.map(key => (
+              <span
+                key={key}
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+              >
+                {key}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveShortKey(key)}
+                  className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500 focus:outline-none"
+                >
+                  <span className="sr-only">Remove short key {key}</span>
                   <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
                     <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
                   </svg>

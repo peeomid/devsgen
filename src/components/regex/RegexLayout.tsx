@@ -164,56 +164,18 @@ export default function RegexLayout() {
     <div className="w-full">
 
       
-      {/* Mobile pattern summary - only visible on mobile */}
+      {/* Mobile pattern info - only visible on mobile */}
       {selectedPattern && (
-        <div className="lg:hidden mb-4 bg-white rounded-lg border border-gray-200 p-3">
-          <div className="flex items-center mb-1">
-            <button 
-              onClick={() => {
-                // Toggle collapsible section in mobile view
-                const mobileDescriptionEl = document.getElementById('mobile-pattern-description');
-                if (mobileDescriptionEl) {
-                  mobileDescriptionEl.classList.toggle('hidden');
-                }
-              }}
-              className="text-gray-500 hover:text-gray-700 p-1 mr-1"
-              aria-label="Toggle description"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <h3 className="text-md font-medium">{selectedPattern.name}</h3>
-            {selectedPattern.category && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 ml-2">
-                {selectedPattern.category}
-              </span>
-            )}
-          </div>
-          <div id="mobile-pattern-description" className="text-sm text-gray-700 mb-2 hidden">
-            {selectedPattern.description}
-          </div>
-          <div className="flex justify-end">
-            <button 
-              onClick={() => toggleCommandPalette()}
-              className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-3 py-1 rounded-md text-sm font-medium flex items-center"
-              title="Find pattern"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              Find Pattern
-              <span className="ml-2 text-xs opacity-75">⌘K</span>
-            </button>
-          </div>
+        <div className="lg:hidden mb-4">
+          <PatternInfo pattern={selectedPattern} isMobile={true} />
         </div>
       )}
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-        {/* Pattern info panel - hidden on mobile, visible on right side in desktop */}
+        {/* Pattern info panel - visible on right side in desktop */}
         <div className="hidden lg:block lg:col-span-1 lg:order-2">
           {selectedPattern && (
-            <PatternInfo pattern={selectedPattern} />
+            <PatternInfo pattern={selectedPattern} isMobile={false} />
           )}
         </div>
         
@@ -244,17 +206,6 @@ export default function RegexLayout() {
                   <h2 className="text-lg font-medium">Output</h2>
                   <span className="ml-2 text-xs text-gray-500">(⌘2 to focus)</span>
                 </div>
-                {/* Create pattern button moved here */}
-                <button
-                  onClick={handleCreatePattern}
-                  className="flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
-                  title="Create a new pattern"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Create Pattern
-                </button>
               </div>
               <OutputArea
                 ref={outputAreaRef}

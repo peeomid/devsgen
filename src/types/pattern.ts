@@ -3,6 +3,8 @@
  */
 export interface Pattern {
   id: string;
+  keyNumber: number; // Unique numeric identifier for quick access
+  shortKeys: string[]; // Short text identifiers for quick search (max 3 chars each)
   name: string;
   description: string;
   category: PatternCategory;
@@ -40,6 +42,7 @@ export interface PatternInput {
   searchRegex: string;
   replaceRegex: string;
   flags?: string;
+  shortKeys?: string[]; // Optional short keys for quick search
   example: {
     input: string;
     output: string;
