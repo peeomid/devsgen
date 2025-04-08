@@ -62,50 +62,37 @@ export default function CommandPalette() {
     setSelectedIndex(0);
   }, [searchQuery, patterns]);
   
-  // Focus input when command palette opens
+  // Focus input when command palette opens and reset when it closes
   useEffect(() => {
     if (uiState.isCommandPaletteOpen && inputRef.current) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 10);
+    } else {
+      // Reset search query and selection when command palette is closed
+      setSearchQuery('');
+      setSelectedIndex(0);
     }
   }, [uiState.isCommandPaletteOpen]);
   
   // Create a flat list of selectable items (excluding category headers)
-  const [selectableItems, setSelectableItems] = useState<{ pattern: Pattern; index: number }[]>([]);
+  const [flattenedItems, setFlattenedItems] = useState<{ pattern: Pattern; index: number }[]>([]);
   
   // Update selectable items when filtered patterns change
   useEffect(() => {
-    // Group patterns by category
-    const groupedPatterns = filteredPatterns.reduce((groups, pattern) => {
-      const category = pattern.category || 'Uncategorized';
-      if (!groups[category]) {
-        groups[category] = [];
-      }
-      groups[category].push(pattern);
-      return groups;
-    }, {} as Record<string, Pattern[]>);
-    
-    // Create a flat list of selectable items with their original indices
-    const items: { pattern: Pattern; index: number }[] = [];
-    let currentIndex = 0;
-    
-    Object.entries(groupedPatterns).forEach(([category, patterns]) => {
-      // Skip the category header in selection
-      currentIndex++;
-      
-      // Add patterns with their indices
-      patterns.forEach(pattern => {
-        items.push({ pattern, index: currentIndex });
-        currentIndex++;
-      });
+    // Create a flat list of patterns (no category headers)
+    const items: { pattern: Pattern; index: number }[] = filteredPatterns.map((pattern, index) => {
+      return { pattern, index };
     });
     
-    setSelectableItems(items);
+    setFlattenedItems(items);
     
     // Reset selected index if it's out of bounds
     if (selectedIndex >= items.length) {
       setSelectedIndex(items.length > 0 ? 0 : -1);
+    } else if (items.length > 0 && selectedIndex < 0) {
+      // Ensure we always have a selection if there are items
+      setSelectedIndex(0);
     }
   }, [filteredPatterns]);
   
@@ -114,25 +101,20 @@ export default function CommandPalette() {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        if (selectableItems.length > 0) {
-          const currentItemIndex = selectableItems.findIndex(item => item.index === selectedIndex);
-          const nextItemIndex = (currentItemIndex + 1) % selectableItems.length;
-          setSelectedIndex(selectableItems[nextItemIndex].index);
+        if (flattenedItems.length > 0) {
+          setSelectedIndex((selectedIndex + 1) % flattenedItems.length);
         }
         break;
       case 'ArrowUp':
         e.preventDefault();
-        if (selectableItems.length > 0) {
-          const currentItemIndex = selectableItems.findIndex(item => item.index === selectedIndex);
-          const prevItemIndex = (currentItemIndex - 1 + selectableItems.length) % selectableItems.length;
-          setSelectedIndex(selectableItems[prevItemIndex].index);
+        if (flattenedItems.length > 0) {
+          setSelectedIndex((selectedIndex - 1 + flattenedItems.length) % flattenedItems.length);
         }
         break;
       case 'Enter':
         e.preventDefault();
-        const selectedItem = selectableItems.find(item => item.index === selectedIndex);
-        if (selectedItem) {
-          selectPattern(selectedItem.pattern.id);
+        if (flattenedItems.length > 0 && selectedIndex >= 0 && selectedIndex < flattenedItems.length) {
+          selectPattern(flattenedItems[selectedIndex].pattern.id);
           toggleCommandPalette();
         }
         break;
@@ -145,16 +127,20 @@ export default function CommandPalette() {
   
   // Scroll selected item into view
   useEffect(() => {
-    if (listRef.current && filteredPatterns.length > 0) {
-      const selectedElement = listRef.current.children[selectedIndex] as HTMLElement;
-      if (selectedElement) {
-        selectedElement.scrollIntoView({
-          block: 'nearest',
-          behavior: 'smooth'
-        });
+    if (listRef.current && flattenedItems.length > 0 && selectedIndex >= 0) {
+      // Find the li element with the selected pattern ID
+      if (flattenedItems[selectedIndex]) {
+        const patternId = flattenedItems[selectedIndex].pattern.id;
+        const selectedElement = listRef.current.querySelector(`li[data-pattern-id="${patternId}"]`) as HTMLElement;
+        if (selectedElement) {
+          selectedElement.scrollIntoView({
+            block: 'nearest',
+            behavior: 'smooth'
+          });
+        }
       }
     }
-  }, [selectedIndex, filteredPatterns]);
+  }, [selectedIndex, flattenedItems]);
   
   // Close on click outside
   useEffect(() => {
@@ -212,45 +198,20 @@ export default function CommandPalette() {
               No patterns found
             </li>
           ) : (
-            Object.entries(filteredPatterns.reduce((groups, pattern) => {
-              const category = pattern.category || 'Uncategorized';
-              if (!groups[category]) {
-                groups[category] = [];
-              }
-              groups[category].push(pattern);
-              return groups;
-            }, {} as Record<string, Pattern[]>))
-            .map(([category, categoryPatterns], categoryIndex) => {
-              const categoryHeaderIndex = categoryIndex === 0 ? 0 : 
-                Object.entries(filteredPatterns.reduce((groups, pattern) => {
-                  const cat = pattern.category || 'Uncategorized';
-                  if (!groups[cat]) {
-                    groups[cat] = [];
-                  }
-                  groups[cat].push(pattern);
-                  return groups;
-                }, {} as Record<string, Pattern[]>))
-                .slice(0, categoryIndex)
-                .reduce((sum, [_, patterns]) => sum + patterns.length + 1, 0);
-              
+            filteredPatterns.map((pattern, index) => {
               return (
-                <React.Fragment key={category}>
-                  <li className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider sticky top-0">
-                    {category}
-                  </li>
-                  {categoryPatterns.map((pattern, patternIndex) => {
-                    return (
-                      <li 
-                        key={pattern.id}
-                        role="option"
-                        aria-selected={patternIndex + categoryHeaderIndex === selectedIndex}
-                        className={`px-4 py-3 cursor-pointer ${
-                          patternIndex + categoryHeaderIndex === selectedIndex ? 'bg-blue-50' : 'hover:bg-gray-50'
-                        }`}
-                        onClick={() => {
-                          selectPattern(pattern.id);
-                          toggleCommandPalette();
-                        }}
+                <li 
+                  key={pattern.id}
+                  role="option"
+                  data-pattern-id={pattern.id}
+                  aria-selected={index === selectedIndex}
+                  className={`px-4 py-3 cursor-pointer ${
+                    index === selectedIndex ? 'bg-blue-50' : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => {
+                    selectPattern(pattern.id);
+                    toggleCommandPalette();
+                  }}
                       >
                         <div className="flex justify-between items-start">
                           <div>
@@ -280,10 +241,7 @@ export default function CommandPalette() {
                             )}
                           </div>
                         </div>
-                      </li>
-                    );
-                  })}
-                </React.Fragment>
+                </li>
               );
             })
           )}
