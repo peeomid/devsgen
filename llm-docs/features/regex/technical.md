@@ -7,7 +7,7 @@ The Regex Helper Tool will be the first utility in a larger developer tools plat
 ### Site Structure
 
 ```
-dev-utils/
+codetweak/
 ├── src/
 │   ├── pages/
 │   │   ├── index.astro             # Main landing page for all tools
@@ -33,7 +33,7 @@ dev-utils/
 To optimize for GitHub SEO, each tool will have its own README.md file:
 
 ```
-dev-utils/
+codetweak/
 ├── tools/
 │   ├── regex/
 │   │   ├── README.md              # Regex tool README (rendered by GitHub)
@@ -405,7 +405,7 @@ const { pattern } = Astro.props;
   <meta property="og:title" content={pattern.seoTitle} />
   <meta property="og:description" content={pattern.seoDescription} />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content={`https://dev-utils.example.com/tools/regex/${pattern.slug}`} />
+  <meta property="og:url" content={`https://codetweak.example.com/tools/regex/${pattern.slug}`} />
   
   <!-- Structured data for rich results -->
   <script type="application/ld+json">
@@ -607,7 +607,7 @@ To optimize the project for GitHub SEO:
 
 ### Quick Start
 
-1. Visit [Regex Helper Tool](https://dev-utils.example.com/tools/regex)
+1. Visit [Regex Helper Tool](https://codetweak.example.com/tools/regex)
 2. Enter your text in the input area
 3. Press Cmd+K to open the pattern selector
 4. Choose a pattern and press Enter to transform

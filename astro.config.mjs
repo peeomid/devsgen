@@ -10,7 +10,7 @@ export default defineConfig({
     tailwind() // Enable Tailwind CSS
   ],
   // Configure site URL for production
-  site: 'https://dev-utils.osimify.com',
+  site: 'https://CodeTweak.osimify.com',
   // Enable SSR for better SEO
   output: 'server',
   // Configure build options

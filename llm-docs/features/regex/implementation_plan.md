@@ -48,10 +48,10 @@
 ### 0. GitHub SEO Optimization
 
 - [ ] **Create Main README.md**
-  - File: `/Users/luan/Development/Osimify/dev-utils/README.md`
-  - Purpose: Project overview and documentation for the entire dev-utils collection
+  - File: `/Users/luan/Development/Osimify/codetweak/README.md`
+  - Purpose: Project overview and documentation for the entire codetweak collection
   - Implementation details:
-    - Title: Dev Utils - A Collection of Developer Utilities
+    - Title: CodeTweak - A Collection of Developer Utilities
     - Top badges: MIT License, Built with Astro, etc.
     - Short description highlighting keyboard-focused workflow and programmer-friendly features
     - Table of contents with links to different sections
@@ -63,7 +63,7 @@
     - SEO keywords: developer tools, regex helper, keyboard shortcuts, utilities
 
 - [ ] **Create Tool-Specific READMEs**
-  - File: `/Users/luan/Development/Osimify/dev-utils/tools/regex/README.md`
+  - File: `/Users/luan/Development/Osimify/codetweak/tools/regex/README.md`
   - Purpose: Detailed documentation for the Regex Helper tool that renders when browsing GitHub
   - Implementation details:
     - Title: Regex Helper - Transform Text with Regular Expressions
@@ -78,7 +78,7 @@
     - SEO keywords: regex tool, regular expressions, text transformation, pattern library
 
 - [ ] **Create Contributing Guidelines**
-  - File: `/Users/luan/Development/Osimify/dev-utils/CONTRIBUTING.md`
+  - File: `/Users/luan/Development/Osimify/codetweak/CONTRIBUTING.md`
   - Purpose: Documentation for contributors to the project
   - Implementation details:
     - Local development setup instructions
@@ -94,7 +94,7 @@
 ### 1. Project Structure
 
 - [ ] **Initialize Astro Project**
-  - File: `/Users/luan/Development/Osimify/dev-utils/package.json`
+  - File: `/Users/luan/Development/Osimify/codetweak/package.json`
   - Purpose: Set up the base project structure with all necessary dependencies
   - Implementation details:
     - Command: `npm create astro@latest`
@@ -104,7 +104,7 @@
     - Set up package.json with:
       ```json
       {
-        "name": "dev-utils",
+        "name": "codetweak",
         "version": "0.1.0",
         "private": true,
         "scripts": {
@@ -133,7 +133,7 @@
       ```
 
 - [ ] **Configure Tailwind CSS**
-  - File: `/Users/luan/Development/Osimify/dev-utils/tailwind.config.js`
+  - File: `/Users/luan/Development/Osimify/codetweak/tailwind.config.js`
   - Purpose: Set up consistent styling framework with custom theme
   - Implementation details:
     - Command: `npx astro add tailwind`
@@ -164,7 +164,7 @@
     - Set up dark mode support with class strategy
 
 - [ ] **Set Up Base Layout**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/layouts/BaseLayout.astro`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/layouts/BaseLayout.astro`
   - Purpose: Create a responsive layout template used by all pages
   - Implementation details:
     - Define HTML structure with proper meta tags and SEO attributes
@@ -189,7 +189,7 @@
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>{title} | Dev Utils</title>
+          <title>{title} | CodeTweak</title>
           <meta name="description" content={description} />
           <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
           <!-- Additional SEO meta tags go here -->
@@ -213,7 +213,7 @@
       ```
 
 - [ ] **Create Tool Page Route**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/pages/tools/regex/index.astro`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/pages/tools/regex/index.astro`
   - Purpose: Main entry point for the regex tool with SEO optimizations
   - Implementation details:
     - Import BaseLayout and RegexHelperApp component
@@ -252,7 +252,7 @@
 ### 2. Data Management
 
 - [ ] **Define Pattern Schema**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/types/PatternTypes.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/types/PatternTypes.ts`
   - Purpose: TypeScript interfaces for pattern data
   - Implementation details:
     - Create TypeScript interfaces for pattern management:
@@ -296,7 +296,7 @@
       ```
 
 - [ ] **Create Sample Patterns**
-  - File: `/Users/luan/Development/Osimify/dev-utils/public/data/regex-patterns.json`
+  - File: `/Users/luan/Development/Osimify/codetweak/public/data/regex-patterns.json`
   - Purpose: Provide initial built-in patterns for the tool
   - Implementation details:
     - Create a JSON file with an array of pattern objects:
@@ -345,7 +345,7 @@
     - Ensure all regex patterns are valid and tested
 
 - [ ] **Implement Pattern Store**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/stores/patternStore.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/stores/patternStore.ts`
   - Purpose: Manage pattern state and provide methods to interact with patterns
   - Implementation details:
     - Create a store using a state management library (e.g., Nanostores for Astro):
@@ -426,7 +426,7 @@
     - Add methods to filter patterns by category
 
 - [ ] **Create Pattern Storage Manager**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/utils/PatternStorageManager.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/utils/PatternStorageManager.ts`
   - Purpose: Handle localStorage operations for pattern management
   - Implementation details:
     - Create utility functions for localStorage operations:
@@ -553,7 +553,7 @@
     - Add error handling for all operations
 
 - [ ] **Create Pattern Service**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/services/patternService.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/services/patternService.ts`
   - Purpose: Business logic for pattern operations
   - Implementation details:
     - Create service for pattern-specific operations:
@@ -684,7 +684,7 @@
 ### 3. Regex Processing
 
 - [ ] **Create Regex Service**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/services/regexService.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/services/regexService.ts`
   - Purpose: Core service for regex transformations and validation
   - Implementation details:
     - Create a service focused on regex operations:
@@ -783,7 +783,7 @@
     - Add performance optimization with caching
 
 - [ ] **Create Test Suite for Regex Service**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/tests/regexService.test.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/tests/regexService.test.ts`
   - Purpose: Comprehensive testing of the core regex functionality
   - Implementation details:
     - Create test suite using Vitest or Jest:
@@ -871,25 +871,25 @@
 ### 4. Core UI Components
 
 - [ ] **Create Input Area Component**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/InputArea.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/InputArea.tsx`
   - Purpose: Text input for regex processing
   - Features: Resizable, monospace font, line numbers
   - Events: onChange, onKeyDown
 
 - [ ] **Create Output Area Component**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/OutputArea.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/OutputArea.tsx`
   - Purpose: Display transformation results
   - Features: Read-only by default, copyable, syntax highlighting
   - Events: onFocus, onCopy
 
 - [ ] **Implement Action Buttons**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/ActionButtons.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/ActionButtons.tsx`
   - Purpose: Transform, copy, clear functionality
   - Features: Visual feedback, tooltips with shortcuts
   - Events: onClick, onKeyDown
 
 - [ ] **Build Hybrid Layout Container**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/RegexLayout.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/RegexLayout.tsx`
   - Purpose: Responsive layout switching
   - Features: Media queries, CSS Grid/Flexbox, layout persistence
   - Breakpoints: Small (<768px), Medium (768px-1200px), Large (>1200px)
@@ -897,26 +897,26 @@
 ### 4. Pattern Selection and Management
 
 - [ ] **Implement Command Palette**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/CommandPalette.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/CommandPalette.tsx`
   - Purpose: Cmd+K pattern search
   - Features: Keyboard navigation, fuzzy search, pattern cards
   - Events: onSearch, onSelect, onKeyDown
 
 - [ ] **Create Pattern Selector Dropdown**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/PatternSelector.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/PatternSelector.tsx`
   - Purpose: Visual pattern selection
   - Features: Categorized patterns, recent patterns, pattern details
   - Adaptability: Dropdown on small screens, panel on large screens
 
 - [ ] **Build Pattern Card Component**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/PatternCard.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/PatternCard.tsx`
   - Purpose: Visual representation of pattern
   - Features: Name, description, example, edit/delete actions
   - States: Normal, selected, hover, focus
   - Visual indicator for pattern source (built-in vs. user-created)
 
 - [ ] **Create Pattern Import/Export Components**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/PatternImportExport.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/PatternImportExport.tsx`
   - Purpose: Import and export user patterns
   - Features:
     - Textarea for displaying JSON of user patterns
@@ -928,19 +928,19 @@
 ### 5. Regex Processing
 
 - [ ] **Create Regex Processor**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/utils/regexProcessor.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/utils/regexProcessor.ts`
   - Purpose: Core transformation logic
   - Functions: transformText(), validateRegex(), handleErrors()
   - Features: Performance optimization for large inputs
 
 - [ ] **Implement Regex Validator**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/utils/regexValidator.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/utils/regexValidator.ts`
   - Purpose: Validate regex patterns
   - Functions: isValidRegex(), getSyntaxErrors(), suggestFixes()
   - Error handling: Detailed error messages for common mistakes
 
 - [ ] **Build Transformation Hook**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/hooks/useTransformation.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/hooks/useTransformation.ts`
   - Purpose: React hook for transformation logic
   - Features: State management, error handling, performance optimization
   - Returns: { transform, result, error, isProcessing }
@@ -948,19 +948,19 @@
 ### 6. Keyboard Navigation
 
 - [ ] **Create Keyboard Shortcut System**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/utils/keyboardShortcuts.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/utils/keyboardShortcuts.ts`
   - Purpose: Manage keyboard shortcuts
   - Features: Register shortcuts, handle conflicts, context-aware shortcuts
   - Implementation: Event listeners with modifier key support
 
 - [ ] **Implement Focus Management**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/hooks/useFocusManagement.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/hooks/useFocusManagement.ts`
   - Purpose: Control focus flow in the application
   - Features: Focus trapping, focus history, focus restoration
   - Functions: moveFocus(), trapFocus(), restoreFocus()
 
 - [ ] **Add Shortcut Indicator Component**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/common/ShortcutIndicator.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/common/ShortcutIndicator.tsx`
   - Purpose: Visual display of available shortcuts
   - Features: Adaptive to OS (Cmd for Mac, Ctrl for Windows/Linux)
   - Styling: Subtle, non-intrusive design
@@ -968,19 +968,19 @@
 ### 7. User Experience
 
 - [ ] **Implement Post-Transform Actions**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/PostTransformActions.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/PostTransformActions.tsx`
   - Purpose: Actions after transformation
   - Features: Temporary floating copy button, focus management
   - Behavior: Appears after transform, disappears after action or timeout
 
 - [ ] **Create Toast Notification System**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/common/Toast.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/common/Toast.tsx`
   - Purpose: Non-intrusive feedback
   - Features: Success/error/info states, auto-dismiss, action buttons
   - Animation: Smooth entrance/exit
 
 - [ ] **Add Visual Feedback Animations**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/styles/animations.css`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/styles/animations.css`
   - Purpose: Enhance UI with subtle animations
   - Features: Transform success, copy confirmation, focus indicators
   - Implementation: CSS transitions and keyframes
@@ -994,13 +994,13 @@
   - Testing: Screen reader verification
 
 - [ ] **Create Skip Navigation**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/common/SkipNav.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/common/SkipNav.tsx`
   - Purpose: Accessibility for keyboard users
   - Features: Skip to main content, skip to pattern selection
   - Styling: Visible only on focus
 
 - [ ] **Add High Contrast Mode**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/styles/highContrast.css`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/styles/highContrast.css`
   - Purpose: Accessibility for vision impaired users
   - Features: Increased contrast, larger text, stronger focus indicators
   - Implementation: CSS custom properties and media queries
@@ -1010,20 +1010,20 @@
 ### Unit Tests
 
 - [ ] **Regex Processor Tests**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/utils/__tests__/regexProcessor.test.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/utils/__tests__/regexProcessor.test.ts`
   - Test cases: Common transformations, edge cases, error handling
   - Coverage: All transformation functions and error handling
   - Include tests for invalid regex patterns
   - Test performance with large inputs
 
 - [ ] **Pattern Store Tests**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/stores/__tests__/patternStore.test.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/stores/__tests__/patternStore.test.ts`
   - Test cases: Load, save, delete, search operations
   - Test combining patterns from server and localStorage
   - Test import/export functionality with various JSON formats
 
 - [ ] **Core Regex Service Tests**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/services/__tests__/regexService.test.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/services/__tests__/regexService.test.ts`
   - Purpose: Test the core regex functionality independently of UI
   - Test cases: 
     - Python path conversion (dot to slash and vice versa)
@@ -1036,22 +1036,22 @@
 
 - [ ] **Input/Output Area Tests**
   - Files: 
-    - `/Users/luan/Development/Osimify/dev-utils/src/components/regex/__tests__/InputArea.test.tsx`
-    - `/Users/luan/Development/Osimify/dev-utils/src/components/regex/__tests__/OutputArea.test.tsx`
+    - `/Users/luan/Development/Osimify/codetweak/src/components/regex/__tests__/InputArea.test.tsx`
+    - `/Users/luan/Development/Osimify/codetweak/src/components/regex/__tests__/OutputArea.test.tsx`
   - Test cases: User input, resizing, copy functionality
 
 - [ ] **Command Palette Tests**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/components/regex/__tests__/CommandPalette.test.tsx`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/components/regex/__tests__/CommandPalette.test.tsx`
   - Test cases: Search, keyboard navigation, selection
 
 ### Integration Tests
 
 - [ ] **Full Transformation Flow Test**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/integration-tests/transformationFlow.test.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/integration-tests/transformationFlow.test.ts`
   - Test cases: End-to-end transformation process
 
 - [ ] **Responsive Layout Tests**
-  - File: `/Users/luan/Development/Osimify/dev-utils/src/integration-tests/responsiveLayout.test.ts`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/integration-tests/responsiveLayout.test.ts`
   - Test cases: Layout switching at different breakpoints
 
 ## Implementation Sequence

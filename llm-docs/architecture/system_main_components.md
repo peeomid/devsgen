@@ -1,4 +1,4 @@
-# Dev Utils - System Architecture Overview
+# CodeTweak - System Architecture Overview
 
 ## Technical Stack
 
@@ -11,7 +11,7 @@
 
 ## System Architecture
 
-The Dev Utils platform follows a modular architecture with a focus on:
+The CodeTweak platform follows a modular architecture with a focus on:
 - Programmatic SEO with dedicated pages for each tool and pattern
 - Client-side interactivity with no page refreshes when using tools
 - Keyboard-focused workflow for developer efficiency
@@ -20,7 +20,7 @@ The Dev Utils platform follows a modular architecture with a focus on:
 ### Component Structure
 
 ```
-dev-utils/
+codetweak/
 ├── src/                         # Source code
 │   ├── components/              # UI components
 │   │   ├── common/              # Shared components
