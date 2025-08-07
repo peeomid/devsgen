@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import { analytics } from '../../services/AnalyticsService';
 
 interface OutputAreaProps {
   value: string;
@@ -58,6 +59,10 @@ const OutputArea = forwardRef<OutputAreaHandle, OutputAreaProps>(({
       await navigator.clipboard.writeText(value);
       setIsCopied(true);
       if (onCopy) onCopy();
+      
+      // Track copy action
+      analytics.copyActionPerformed('output', 'button');
+      
       return true;
     } catch (err) {
       console.error('Failed to copy text:', err);

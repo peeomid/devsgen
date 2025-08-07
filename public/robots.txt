@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://CodeTweak.osimify.com/sitemap-index.xml
+Sitemap: https://CodeTweak.osimify.com/sitemap.xml

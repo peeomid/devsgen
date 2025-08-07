@@ -9,6 +9,7 @@ import type { Pattern } from '../../../types/pattern';
 // SEO metadata
 const title = "Regex Find and Replace Tool Online - Transform Text | CodeTweak";
 const description = "Free online regex find and replace tool. Convert camelCase to snake_case, slash to dot notation, extract URLs & emails. Built-in patterns + custom regex transformations.";
+const pageUrl = "/tools/regex-find-replace";
 
 // Get weighted random patterns for the landing page
 const patterns = builtInPatterns as Pattern[];
@@ -50,7 +51,7 @@ function getPatternUrl(pattern: Pattern): string {
 }
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} pageUrl={pageUrl}>
   <div class="max-w-7xl mx-auto">
     <header class="mb-4">
       <h1 class="text-3xl font-bold text-gray-900">Regex Helper Tool</h1>

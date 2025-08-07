@@ -7,14 +7,20 @@ interface Props {
   description: string;
   ogImage?: string;
   canonicalUrl?: string;
+  pageUrl?: string; // For page-specific URLs
 }
 
 const { 
   title, 
   description, 
   ogImage = '/images/og-default.png',
-  canonicalUrl
+  canonicalUrl,
+  pageUrl
 } = Astro.props;
+
+// For static builds, use the site config base URL
+const siteUrl = import.meta.env.SITE || 'https://codetweak.com';
+const currentPageUrl = pageUrl ? new URL(pageUrl, siteUrl).href : siteUrl;
 ---
 
 <!DOCTYPE html>
@@ -28,21 +34,31 @@ const {
     
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
+    <meta property="og:url" content={currentPageUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(ogImage, Astro.url)} />
+    <meta property="og:image" content={new URL(ogImage, siteUrl)} />
     
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content={Astro.url.host} />
-    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:domain" content={new URL(siteUrl).hostname} />
+    <meta property="twitter:url" content={currentPageUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(ogImage, Astro.url)} />
+    <meta name="twitter:image" content={new URL(ogImage, siteUrl)} />
     
     <!-- Canonical URL -->
-    <link rel="canonical" href={canonicalUrl || Astro.url} />
+    <link rel="canonical" href={canonicalUrl || currentPageUrl} />
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LJJGB1DCHW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-LJJGB1DCHW');
+    </script>
   </head>
   <body class="bg-background text-text min-h-screen flex flex-col">
     <a href="#main-content" class="skip-nav">Skip to content</a>
@@ -123,6 +139,72 @@ const {
 
     <!-- Keyboard shortcut handler -->
     <script>
+      // Analytics tracking for keyboard shortcuts
+      function trackKeyboardShortcut(shortcut, action) {
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('event', 'keyboard_shortcut_used', {
+            shortcut: shortcut,
+            action: action,
+            event_category: 'ui_interaction'
+          });
+        }
+      }
+
+      // Global keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        const cmdKey = isMac ? e.metaKey : e.ctrlKey;
+        
+        // Command palette (⌘K)
+        if (cmdKey && e.key === 'k') {
+          e.preventDefault();
+          trackKeyboardShortcut('⌘K', 'open_command_palette');
+          // The actual command palette logic is handled in the React components
+        }
+        
+        // Edit pattern (⌘E)
+        if (cmdKey && e.key === 'e') {
+          const searchInput = document.getElementById('regex-search-input');
+          if (searchInput) {
+            e.preventDefault();
+            trackKeyboardShortcut('⌘E', 'edit_pattern');
+            searchInput.focus();
+          }
+        }
+        
+        // Transform text (⌘Enter)
+        if (cmdKey && e.key === 'Enter') {
+          e.preventDefault();
+          trackKeyboardShortcut('⌘Enter', 'transform_text');
+        }
+        
+        // Copy output (⌘⇧C)
+        if (cmdKey && e.shiftKey && e.key === 'C') {
+          e.preventDefault();
+          trackKeyboardShortcut('⌘⇧C', 'copy_output');
+        }
+        
+        // Focus input area (⌘1)
+        if (cmdKey && e.key === '1') {
+          const inputTextarea = document.querySelector('[data-testid="input-textarea"]');
+          if (inputTextarea) {
+            e.preventDefault();
+            trackKeyboardShortcut('⌘1', 'focus_input');
+            inputTextarea.focus();
+          }
+        }
+        
+        // Focus output area (⌘2)
+        if (cmdKey && e.key === '2') {
+          const outputTextarea = document.querySelector('[data-testid="output-textarea"]');
+          if (outputTextarea) {
+            e.preventDefault();
+            trackKeyboardShortcut('⌘2', 'focus_output');
+            outputTextarea.focus();
+          }
+        }
+      });
+
       // Toggle mobile menu
       const mobileMenuButton = document.getElementById('mobile-menu-button');
       const mobileMenu = document.getElementById('mobile-menu');

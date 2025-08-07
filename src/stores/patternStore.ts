@@ -2,6 +2,7 @@ import { atom, map } from 'nanostores';
 import type { Pattern, TransformationResult } from '../types/pattern';
 import { PatternService } from '../services/PatternService';
 import { RegexService } from '../services/RegexService';
+import { analytics } from '../services/AnalyticsService';
 
 // Create instances of services
 const patternService = new PatternService();
@@ -97,11 +98,23 @@ export async function initializePatternStore(): Promise<void> {
 /**
  * Select a pattern
  */
-export function selectPattern(patternId: string): void {
+export function selectPattern(patternId: string, selectionMethod: 'command_palette' | 'url_direct' | 'keyboard_shortcut' = 'command_palette'): void {
   selectedPatternIdStore.set(patternId);
   // Reset custom regex when switching patterns
   resetCustomRegex();
   closeModificationDialog();
+  
+  // Track pattern selection
+  const patterns = patternsStore.get();
+  const pattern = patterns.find(p => p.id === patternId);
+  if (pattern) {
+    analytics.patternSelected(patternId, pattern.name, selectionMethod);
+  }
+  
+  // Save to localStorage
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('regex_selected_pattern', patternId);
+  }
 }
 
 /**
@@ -131,6 +144,9 @@ export async function searchPatterns(query: string): Promise<void> {
   
   const result = await patternService.searchPatterns(query);
   searchResultsStore.set(result.patterns);
+  
+  // Track search
+  analytics.patternSearched(query, result.patterns.length);
 }
 
 /**
@@ -172,9 +188,21 @@ export async function transformText(input: string): Promise<void> {
       output,
       executionTime: endTime - startTime
     });
+    
+    // Track successful transformation
+    analytics.textTransformed(
+      selectedPatternId,
+      input.length,
+      output.length,
+      endTime - startTime
+    );
   } catch (error) {
-    transformationStore.setKey('error', error instanceof Error ? error.message : 'Unknown error');
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    transformationStore.setKey('error', errorMessage);
     transformationStore.setKey('result', null);
+    
+    // Track transformation error
+    analytics.transformError(selectedPatternId, errorMessage);
   } finally {
     transformationStore.setKey('isProcessing', false);
   }
@@ -213,20 +241,43 @@ export async function transformWithCustomRegex(
  * Set custom regex for the currently selected pattern
  */
 export function setCustomRegex(searchRegex: string, replaceRegex: string, flags?: string): void {
+  const selectedPatternId = selectedPatternIdStore.get();
+  const originalPattern = getSelectedPattern();
+  
   customRegexStore.setKey('searchRegex', searchRegex);
   customRegexStore.setKey('replaceRegex', replaceRegex);
   customRegexStore.setKey('flags', flags);
   isPatternModifiedStore.set(true);
+  
+  // Track pattern modification
+  if (selectedPatternId && originalPattern) {
+    if (searchRegex !== originalPattern.searchRegex) {
+      analytics.patternModified(selectedPatternId, 'search');
+    }
+    if (replaceRegex !== originalPattern.replaceRegex) {
+      analytics.patternModified(selectedPatternId, 'replace');
+    }
+    if (flags !== originalPattern.flags) {
+      analytics.patternModified(selectedPatternId, 'flags');
+    }
+  }
 }
 
 /**
  * Reset custom regex to use original pattern
  */
 export function resetCustomRegex(): void {
+  const selectedPatternId = selectedPatternIdStore.get();
+  
   customRegexStore.setKey('searchRegex', '');
   customRegexStore.setKey('replaceRegex', '');
   customRegexStore.setKey('flags', undefined);
   isPatternModifiedStore.set(false);
+  
+  // Track pattern reset
+  if (selectedPatternId) {
+    analytics.patternReset(selectedPatternId);
+  }
 }
 
 /**
@@ -326,8 +377,14 @@ export async function deletePattern(patternId: string): Promise<boolean> {
 /**
  * Toggle command palette
  */
-export function toggleCommandPalette(): void {
-  uiStateStore.setKey('isCommandPaletteOpen', !uiStateStore.get().isCommandPaletteOpen);
+export function toggleCommandPalette(method: 'button' | 'keyboard' = 'button'): void {
+  const isCurrentlyOpen = uiStateStore.get().isCommandPaletteOpen;
+  uiStateStore.setKey('isCommandPaletteOpen', !isCurrentlyOpen);
+  
+  // Track command palette opened (only when opening, not closing)
+  if (!isCurrentlyOpen) {
+    analytics.commandPaletteOpened(method);
+  }
 }
 
 /**

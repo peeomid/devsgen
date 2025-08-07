@@ -8,6 +8,7 @@ import CommandPalette from './CommandPalette';
 import PatternSelectorBar from './PatternSelectorBar';
 import RegexEditor from './RegexEditor';
 import PatternReference from './PatternReference';
+import { analytics } from '../../services/AnalyticsService';
 import { 
   transformationStore, 
   transformText,
@@ -29,6 +30,19 @@ export default function RegexLayout() {
   const [output, setOutput] = useState('');
   const inputAreaRef = useRef<InputAreaHandle>(null);
   const outputAreaRef = useRef<OutputAreaHandle>(null);
+  const sessionStartTimeRef = useRef<number>(Date.now());
+  
+  // Track tool session on mount
+  useEffect(() => {
+    analytics.toolSessionStarted('regex-find-replace');
+    sessionStartTimeRef.current = Date.now();
+    
+    // Track session duration on unmount
+    return () => {
+      const sessionDuration = Math.floor((Date.now() - sessionStartTimeRef.current) / 1000);
+      analytics.toolSessionDuration('regex-find-replace', sessionDuration);
+    };
+  }, []);
   
   // Initialize layout and load saved data from localStorage
   useEffect(() => {

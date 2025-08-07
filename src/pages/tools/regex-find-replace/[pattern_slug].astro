@@ -72,9 +72,10 @@ if (!actualPattern) {
 const title = generateSeoTitle(actualPattern);
 const description = generateSeoDescription(actualPattern);
 const canonicalUrl = (isCanonical === false && canonicalId) ? `/tools/regex-find-replace/${canonicalId}` : undefined;
+const pageUrl = `/tools/regex-find-replace/${pattern_slug}`;
 ---
 
-<BaseLayout title={title} description={description} canonicalUrl={canonicalUrl}>
+<BaseLayout title={title} description={description} canonicalUrl={canonicalUrl} pageUrl={pageUrl}>
   <!-- JSON-LD Schema for SoftwareApplication -->
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
@@ -216,16 +217,21 @@ const canonicalUrl = (isCanonical === false && canonicalId) ? `/tools/regex-find
   </div>
 </BaseLayout>
 
-<script define:vars={{ patternId: actualPattern.id }}>
+<script define:vars={{ patternId: actualPattern.id, patternName: actualPattern.name }}>
   // Initialize the pattern store and select the current pattern
   document.addEventListener('DOMContentLoaded', async () => {
-    // Dynamically import the store functions
+    // Dynamically import the store functions and analytics
     const { initializePatternStore, selectPattern } = await import('/src/stores/patternStore.ts');
+    const { analytics } = await import('/src/services/AnalyticsService.ts');
     
     // Initialize the pattern store first
     await initializePatternStore();
     
     // Then select our specific pattern (this will override any localStorage selection)
-    selectPattern(patternId);
+    selectPattern(patternId, 'url_direct');
+    
+    // Track pattern page view
+    const isDirectAccess = !document.referrer || !document.referrer.includes(window.location.hostname);
+    analytics.patternPageViewed(patternId, patternName, isDirectAccess);
   });
 </script>

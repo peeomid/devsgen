@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PatternService } from '../../services/PatternService';
+import { analytics } from '../../services/AnalyticsService';
 import type { PatternImportResult } from '../../types/pattern';
 
 const patternService = new PatternService();
@@ -30,14 +31,19 @@ export default function PatternImportExport() {
     }
     
     try {
-      await patternService.importPatterns(importText);
+      const result = await patternService.importPatterns(importText);
       setImportText('');
       setError(null);
-      setImportResult({
+      
+      const actualResult = {
         success: true,
-        imported: 1, // This will be updated with actual count
-        skipped: 0
-      });
+        imported: result?.imported || 1, 
+        skipped: result?.skipped || 0
+      };
+      setImportResult(actualResult);
+      
+      // Track successful import
+      analytics.patternsImported(actualResult.imported, 'json_paste');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to import patterns');
       setImportResult({
@@ -55,6 +61,16 @@ export default function PatternImportExport() {
       const exported = await patternService.exportPatterns();
       setExportText(exported);
       setError(null);
+      
+      // Count patterns in export and track
+      try {
+        const patterns = JSON.parse(exported);
+        const count = Array.isArray(patterns) ? patterns.length : 1;
+        analytics.patternsExported(count, 'json_copy');
+      } catch {
+        // If JSON parsing fails, assume 1 pattern
+        analytics.patternsExported(1, 'json_copy');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to export patterns');
     }
@@ -64,7 +80,8 @@ export default function PatternImportExport() {
   const handleCopyExport = async () => {
     try {
       await navigator.clipboard.writeText(exportText);
-      // Show success message
+      // Track copy action
+      analytics.copyActionPerformed('pattern_json', 'button');
     } catch (err) {
       setError('Failed to copy to clipboard');
     }
