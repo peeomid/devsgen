@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import RegexLayout from '../../../components/regex/RegexLayout';
+import PatternImportExport from '../../../components/regex/PatternImportExport';
+import ShortcutGuide from '../../../components/regex/ShortcutGuide';
+import builtInPatterns from '../../../data/built-in-patterns.json';
+import type { Pattern } from '../../../types/pattern';
+
+// SEO metadata
+const title = "Regex Find and Replace Tool Online - Transform Text | CodeTweak";
+const description = "Free online regex find and replace tool. Convert camelCase to snake_case, slash to dot notation, extract URLs & emails. Built-in patterns + custom regex transformations.";
+
+// Get weighted random patterns for the landing page
+const patterns = builtInPatterns as Pattern[];
+
+// Weighted random selection function
+function getWeightedRandomPatterns(patterns: Pattern[], count: number = 6): Pattern[] {
+  // Create weighted array (featured patterns have higher weight)
+  const weightedPatterns: Pattern[] = [];
+  
+  patterns.forEach(pattern => {
+    const weight = pattern.featured ? 3 : 1; // Featured patterns 3x more likely
+    for (let i = 0; i < weight; i++) {
+      weightedPatterns.push(pattern);
+    }
+  });
+  
+  // Shuffle weighted array and pick unique patterns
+  const shuffled = weightedPatterns.sort(() => Math.random() - 0.5);
+  const selected: Pattern[] = [];
+  const seen = new Set<string>();
+  
+  for (const pattern of shuffled) {
+    if (!seen.has(pattern.id) && selected.length < count) {
+      selected.push(pattern);
+      seen.add(pattern.id);
+    }
+    if (selected.length >= count) break;
+  }
+  
+  return selected;
+}
+
+const displayPatterns = getWeightedRandomPatterns(patterns, 6);
+
+// Helper function to get the URL for a pattern (prefer slug over id)
+function getPatternUrl(pattern: Pattern): string {
+  const slug = pattern.slug || pattern.id;
+  return `/tools/regex-find-replace/${slug}`;
+}
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-4">
+      <h1 class="text-3xl font-bold text-gray-900">Regex Helper Tool</h1>
+      <p class="mt-2 text-lg text-gray-600">
+        Transform text using regular expressions with built-in patterns or create your own
+      </p>
+      <ShortcutGuide client:load />
+    </header>
+
+    <div class="mb-12">
+      <RegexLayout client:load />
+    </div>
+
+    <!-- Popular Patterns Section -->
+    <section class="mb-12 border-t border-gray-200 pt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Transformation Patterns</h2>
+      <p class="text-gray-600 mb-6">Discover regex patterns for text transformation - refreshed on each page load to help you find new tools.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {displayPatterns.map((pattern) => (
+          <a href={getPatternUrl(pattern)} class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all group">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="font-medium text-gray-900 group-hover:text-primary">{pattern.name}</h3>
+              <svg class="w-4 h-4 text-gray-400 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">{pattern.description}</p>
+            <div class="text-xs">
+              <div class="text-gray-500">From: <code class="bg-gray-100 px-1 rounded">{pattern.example.input}</code></div>
+              <div class="text-green-600 mt-1">To: <code class="bg-green-100 px-1 rounded">{pattern.example.output}</code></div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <div class="text-center">
+        <p class="text-sm text-gray-600 mb-4">Need a different transformation? Use the command palette above or browse all patterns.</p>
+        <div class="flex justify-center space-x-4">
+          <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded-md font-mono text-xs">⌘K</kbd>
+          <span class="text-sm text-gray-600">to search all patterns</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12 border-t border-gray-200 pt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Manage Patterns</h2>
+      <PatternImportExport client:load />
+    </section>
+
+    <section class="mb-12 border-t border-gray-200 pt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Regex Helper</h2>
+      <div class="prose max-w-none">
+        <p>
+          The Regex Helper Tool allows you to transform text using regular expressions. 
+          It comes with a set of built-in patterns for common transformations, and you can 
+          create your own custom patterns.
+        </p>
+        <h3>Features</h3>
+        <ul>
+          <li>Built-in patterns for common transformations</li>
+          <li>Create and save your own custom patterns</li>
+          <li>Import and export patterns to share with others</li>
+          <li>Keyboard shortcuts for efficient workflow</li>
+          <li>Command palette for quick pattern search (⌘K)</li>
+        </ul>
+        <h3>How to Use</h3>
+        <ol>
+          <li>Select a pattern from the list or search using the command palette (⌘K)</li>
+          <li>Enter your text in the input area</li>
+          <li>Click "Transform" or press ⌘+Enter to apply the transformation</li>
+          <li>Copy the result from the output area</li>
+        </ol>
+        <h3>Creating Custom Patterns</h3>
+        <p>
+          You can create your own custom patterns by clicking the "Create Pattern" button. 
+          Each pattern consists of:
+        </p>
+        <ul>
+          <li><strong>Name:</strong> A descriptive name for the pattern</li>
+          <li><strong>Description:</strong> A brief explanation of what the pattern does</li>
+          <li><strong>Search Regex:</strong> The regular expression pattern to search for</li>
+          <li><strong>Replace Regex:</strong> The replacement pattern</li>
+          <li><strong>Example:</strong> An example input and expected output</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  // Initialize the pattern store when the page loads
+  import { initializePatternStore } from '../../../stores/patternStore';
+  
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    initializePatternStore();
+  });
+</script>

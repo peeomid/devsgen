@@ -13,16 +13,19 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@astrojs/react": "^3.6.3",
-    "@astrojs/tailwind": "^5.1.5",
+    "@astrojs/react": "^4.3.0",
+    "@astrojs/tailwind": "^6.0.2",
     "@nanostores/react": "^0.7.2",
-    "astro": "^5.5.2",
+    "astro": "^5.12.7",
     "nanostores": "^0.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
@@ -31,6 +34,7 @@
     "eslint-plugin-astro": "^0.31.4",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.34.0",
+    "jsdom": "^26.1.0",
     "typescript": "^5.4.2",
     "vitest": "^1.4.0"
   }

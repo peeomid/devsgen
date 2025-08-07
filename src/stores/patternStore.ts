@@ -37,6 +37,19 @@ export const uiStateStore = map<{
   isMobileMenuOpen: false,
   layout: 'horizontal' // Default layout, will be updated on client-side
 });
+// Custom regex modification state
+export const customRegexStore = map<{
+  searchRegex: string;
+  replaceRegex: string;
+  flags?: string;
+}>({
+  searchRegex: '',
+  replaceRegex: '',
+  flags: undefined
+});
+
+export const isPatternModifiedStore = atom<boolean>(false);
+export const isModificationDialogOpenStore = atom<boolean>(false);
 
 // Initialize layout based on window width (client-side only)
 if (typeof window !== 'undefined') {
@@ -86,6 +99,9 @@ export async function initializePatternStore(): Promise<void> {
  */
 export function selectPattern(patternId: string): void {
   selectedPatternIdStore.set(patternId);
+  // Reset custom regex when switching patterns
+  resetCustomRegex();
+  closeModificationDialog();
 }
 
 /**
@@ -122,6 +138,8 @@ export async function searchPatterns(query: string): Promise<void> {
  */
 export async function transformText(input: string): Promise<void> {
   const selectedPatternId = selectedPatternIdStore.get();
+  const isModified = isPatternModifiedStore.get();
+  const customRegex = customRegexStore.get();
   
   if (!selectedPatternId) {
     transformationStore.setKey('error', 'No pattern selected');
@@ -134,7 +152,20 @@ export async function transformText(input: string): Promise<void> {
   
   try {
     const startTime = performance.now();
-    const output = regexService.transform(selectedPatternId, input);
+    let output: string;
+    
+    // Use custom regex if pattern is modified, otherwise use original pattern
+    if (isModified && customRegex.searchRegex) {
+      output = regexService.transformWithRegex(
+        input, 
+        customRegex.searchRegex, 
+        customRegex.replaceRegex,
+        customRegex.flags
+      );
+    } else {
+      output = regexService.transform(selectedPatternId, input);
+    }
+    
     const endTime = performance.now();
     
     transformationStore.setKey('result', {
@@ -176,6 +207,41 @@ export async function transformWithCustomRegex(
   } finally {
     transformationStore.setKey('isProcessing', false);
   }
+}
+
+/**
+ * Set custom regex for the currently selected pattern
+ */
+export function setCustomRegex(searchRegex: string, replaceRegex: string, flags?: string): void {
+  customRegexStore.setKey('searchRegex', searchRegex);
+  customRegexStore.setKey('replaceRegex', replaceRegex);
+  customRegexStore.setKey('flags', flags);
+  isPatternModifiedStore.set(true);
+}
+
+/**
+ * Reset custom regex to use original pattern
+ */
+export function resetCustomRegex(): void {
+  customRegexStore.setKey('searchRegex', '');
+  customRegexStore.setKey('replaceRegex', '');
+  customRegexStore.setKey('flags', undefined);
+  isPatternModifiedStore.set(false);
+}
+
+/**
+ * Open/close modification dialog
+ */
+export function toggleModificationDialog(): void {
+  isModificationDialogOpenStore.set(!isModificationDialogOpenStore.get());
+}
+
+export function openModificationDialog(): void {
+  isModificationDialogOpenStore.set(true);
+}
+
+export function closeModificationDialog(): void {
+  isModificationDialogOpenStore.set(false);
 }
 
 /**

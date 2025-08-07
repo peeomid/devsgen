@@ -64,7 +64,7 @@ export default function PatternManager() {
             <div className="text-center py-8 bg-gray-50 rounded-md border border-gray-200">
               <p className="text-gray-600 mb-4">You haven't created any custom patterns yet</p>
               <a
-                href="/tools/regex/create"
+                href="/tools/regex-find-replace/create"
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-700"
               >
                 Create Your First Pattern

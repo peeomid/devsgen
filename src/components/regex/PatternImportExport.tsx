@@ -15,7 +15,7 @@ export default function PatternImportExport() {
   // Handle create pattern navigation
   const handleCreatePattern = () => {
     if (typeof window !== 'undefined') {
-      window.location.href = '/tools/regex/create';
+      window.location.href = '/tools/regex-find-replace/create';
     }
   };
   

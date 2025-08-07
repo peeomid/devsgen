@@ -96,6 +96,7 @@ const InputArea = forwardRef<InputAreaHandle, InputAreaProps>(({
         spellCheck={false}
         aria-label="Input text"
         title="Input area (⌘1 to focus)"
+        data-testid="input-textarea"
       />
       
       {onTransform && (

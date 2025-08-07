@@ -100,6 +100,7 @@ const OutputArea = forwardRef<OutputAreaHandle, OutputAreaProps>(({
             spellCheck={false}
             aria-label="Output text"
             title="Output area (⌘2 to focus)"
+            data-testid="output-textarea"
           />
         )}
       </div>

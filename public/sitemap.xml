@@ -14,17 +14,17 @@
   
   <!-- Regex Helper Tool -->
   <url>
-    <loc>https://CodeTweak.osimify.com/tools/regex</loc>
+    <loc>https://CodeTweak.osimify.com/tools/regex-find-replace</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://CodeTweak.osimify.com/tools/regex/create</loc>
+    <loc>https://CodeTweak.osimify.com/tools/regex-find-replace/create</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://CodeTweak.osimify.com/tools/regex/manage</loc>
+    <loc>https://CodeTweak.osimify.com/tools/regex-find-replace/manage</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32,7 +32,7 @@
   <!-- Built-in pattern pages will be generated dynamically -->
   <!-- This is a placeholder for demonstration -->
   <url>
-    <loc>https://CodeTweak.osimify.com/tools/regex/email-validator</loc>
+    <loc>https://CodeTweak.osimify.com/tools/regex-find-replace/email-validator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

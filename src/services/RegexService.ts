@@ -38,6 +38,11 @@ export class RegexService {
       throw new Error(`Pattern not found: ${patternId}`);
     }
     
+    // Special cases for extractions (patterns that extract matches only)
+    if (patternId === 'extract-urls' || patternId === 'extract-emails') {
+      return this.extractMatches(input, pattern.searchRegex, pattern.flags);
+    }
+    
     // Special cases for case conversions
     if (patternId === 'kebab-to-camel') {
       return this.transformKebabToCamel(input);
@@ -92,6 +97,37 @@ export class RegexService {
         throw new Error(`Transformation error: ${error.message}`);
       }
       throw new Error('Unknown transformation error');
+    }
+  }
+
+  /**
+   * Extract all matches from the input text and return them as a newline-separated string
+   */
+  public extractMatches(input: string, searchRegex: string, flags?: string): string {
+    try {
+      // Validate the regex
+      const validation = this.validateRegex(searchRegex);
+      if (!validation.isValid) {
+        throw new Error(`Invalid regex: ${validation.error}`);
+      }
+      
+      // Create regex object with specified flags or default to global
+      const regex = new RegExp(searchRegex, flags || 'g');
+      
+      // Extract all matches
+      const matches = input.match(regex);
+      
+      if (!matches || matches.length === 0) {
+        return '';
+      }
+      
+      // Return matches joined with newlines
+      return matches.join('\n') + '\n';
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Extraction error: ${error.message}`);
+      }
+      throw new Error('Unknown extraction error');
     }
   }
   

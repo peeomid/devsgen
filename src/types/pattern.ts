@@ -6,6 +6,7 @@ export interface Pattern {
   keyNumber: number; // Unique numeric identifier for quick access
   shortKeys: string[]; // Short text identifiers for quick search (max 3 chars each)
   name: string;
+  slug?: string; // SEO-friendly URL slug
   description: string;
   category: PatternCategory;
   searchRegex: string;
@@ -16,6 +17,7 @@ export interface Pattern {
     output: string;
   };
   isBuiltIn: boolean;
+  featured?: boolean; // Whether to show on homepage
   tags: string[];
   createdAt: string;
   updatedAt: string;

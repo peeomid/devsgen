@@ -36,7 +36,7 @@ Transform text using regular expressions with built-in patterns or create your o
 - Join multi-line items: `item1\nitem2\nitem3` → `item1,item2,item3`
 - Add quotes to lines: `item1\nitem2` → `"item1"\n"item2"`
 
-[🔗 Try Regex Helper](https://CodeTweak.osimify.com/tools/regex)
+[🔗 Try Regex Helper](https://CodeTweak.osimify.com/tools/regex-find-replace)
 
 ## 🚀 Getting Started
 

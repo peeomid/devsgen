@@ -5,16 +5,16 @@ import type { InputAreaHandle } from './InputArea';
 import OutputArea from './OutputArea';
 import type { OutputAreaHandle } from './OutputArea';
 import CommandPalette from './CommandPalette';
-import PatternInfo from './PatternInfo';
+import PatternSelectorBar from './PatternSelectorBar';
+import RegexEditor from './RegexEditor';
+import PatternReference from './PatternReference';
 import { 
   transformationStore, 
   transformText,
   uiStateStore,
   selectedPatternIdStore,
   patternsStore,
-  getSelectedPattern,
-  toggleCommandPalette,
-  setLayout,
+  isPatternModifiedStore,
   initializeLayout
 } from '../../stores/patternStore';
 
@@ -23,6 +23,7 @@ export default function RegexLayout() {
   const uiState = useStore(uiStateStore);
   const patterns = useStore(patternsStore);
   const selectedPatternId = useStore(selectedPatternIdStore);
+  const isPatternModified = useStore(isPatternModifiedStore);
   const [selectedPattern, setSelectedPattern] = useState<any>(null);
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
@@ -74,6 +75,15 @@ export default function RegexLayout() {
           outputAreaRef.current.copyToClipboard();
         }
       }
+      
+      // Command+E to focus search input (edit pattern)
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+        e.preventDefault();
+        const searchInput = document.getElementById('regex-search-input');
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
     };
     
     window.addEventListener('keydown', handleKeyDown);
@@ -103,12 +113,6 @@ export default function RegexLayout() {
     }
   }, [selectedPatternId, patterns]);
   
-  // Navigate to create pattern page
-  const handleCreatePattern = () => {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/tools/regex/create';
-    }
-  };
   
   // Handle transformation
   const handleTransform = () => {
@@ -142,10 +146,6 @@ export default function RegexLayout() {
     }
   }, [input]);
   
-  // This function is kept for compatibility but no longer used in the UI
-  const toggleLayout = () => {
-    setLayout('horizontal'); // Always use horizontal layout
-  };
   
   // Process input on initial load if needed
   useEffect(() => {
@@ -162,61 +162,75 @@ export default function RegexLayout() {
   
   return (
     <div className="w-full">
-
-      
-      {/* Mobile pattern info - only visible on mobile */}
-      {selectedPattern && (
-        <div className="lg:hidden mb-4">
-          <PatternInfo pattern={selectedPattern} isMobile={true} />
+      {/* Hybrid Layout: Desktop (side by side), Mobile (stacked) */}
+      <div className="lg:grid lg:grid-cols-[1fr,400px] lg:gap-6 space-y-6 lg:space-y-0">
+        
+        {/* Left Column: Input/Output Areas */}
+        <div className="space-y-6">
+          {/* Input area */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center">
+                <h2 className="text-lg font-medium">Input</h2>
+                <span className="ml-2 text-xs text-gray-500">(⌘1 to focus)</span>
+              </div>
+            </div>
+            <InputArea
+              ref={inputAreaRef}
+              value={input}
+              onChange={setInput}
+              onTransform={handleTransform}
+              disabled={transformation.isProcessing}
+            />
+          </div>
+          
+          {/* Output area */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center">
+                <h2 className="text-lg font-medium">Output</h2>
+                <span className="ml-2 text-xs text-gray-500">(⌘2 to focus)</span>
+              </div>
+            </div>
+            <OutputArea
+              ref={outputAreaRef}
+              value={output}
+              onChange={setOutput}
+              executionTime={transformation.result?.executionTime}
+              isLoading={transformation.isProcessing}
+              error={transformation.error}
+            />
+          </div>
         </div>
-      )}
 
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-        {/* Pattern info panel - visible on right side in desktop */}
-        <div className="hidden lg:block lg:col-span-1 lg:order-2">
-          {selectedPattern && (
-            <PatternInfo pattern={selectedPattern} isMobile={false} />
-          )}
+        {/* Right Column: Three-panel regex structure (Desktop only) */}
+        <div className="hidden lg:block">
+          <div className="space-y-4">
+            {/* 1. Pattern Selector Bar */}
+            <PatternSelectorBar pattern={selectedPattern} />
+            
+            {/* 2. Regex Editor */}
+            <RegexEditor pattern={selectedPattern} />
+            
+            {/* 3. Pattern Reference (conditional) */}
+            {selectedPattern && !isPatternModified && (
+              <PatternReference pattern={selectedPattern} isMobile={false} />
+            )}
+          </div>
         </div>
         
-        {/* Input/Output areas */}
-        <div className="lg:col-span-2 lg:order-1">
-          <div className="space-y-6">
-            {/* Input area */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center">
-                  <h2 className="text-lg font-medium">Input</h2>
-                  <span className="ml-2 text-xs text-gray-500">(⌘1 to focus)</span>
-                </div>
-              </div>
-              <InputArea
-                ref={inputAreaRef}
-                value={input}
-                onChange={setInput}
-                onTransform={handleTransform}
-                disabled={transformation.isProcessing}
-              />
-            </div>
-            
-            {/* Output area */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center">
-                  <h2 className="text-lg font-medium">Output</h2>
-                  <span className="ml-2 text-xs text-gray-500">(⌘2 to focus)</span>
-                </div>
-              </div>
-              <OutputArea
-                ref={outputAreaRef}
-                value={output}
-                onChange={setOutput}
-                executionTime={transformation.result?.executionTime}
-                isLoading={transformation.isProcessing}
-                error={transformation.error}
-              />
-            </div>
-          </div>
+        {/* Mobile: Three-panel structure stacked on top */}
+        <div className="lg:hidden space-y-4">
+          {/* 1. Pattern Selector Bar */}
+          <PatternSelectorBar pattern={selectedPattern} />
+          
+          {/* 2. Regex Editor */}
+          <RegexEditor pattern={selectedPattern} />
+          
+          {/* 3. Pattern Reference (conditional) */}
+          {selectedPattern && !isPatternModified && (
+            <PatternReference pattern={selectedPattern} isMobile={true} />
+          )}
         </div>
       </div>
       

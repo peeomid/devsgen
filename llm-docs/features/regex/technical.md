@@ -254,8 +254,8 @@ To achieve both SEO benefits and client-side interactivity:
 
 ### URL Strategy
 
-- `/tools/regex` - Main regex tool page
-- `/tools/regex/[pattern-slug]` - Dedicated page for each pattern
+- `/tools/regex-find-replace` - Main regex tool page
+- `/tools/regex-find-replace/[pattern-slug]` - Dedicated page for each pattern
 - Client-side routing for switching patterns within the tool
 - Update URL using history API when patterns change (without page reload)
 
@@ -405,7 +405,7 @@ const { pattern } = Astro.props;
   <meta property="og:title" content={pattern.seoTitle} />
   <meta property="og:description" content={pattern.seoDescription} />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content={`https://codetweak.example.com/tools/regex/${pattern.slug}`} />
+  <meta property="og:url" content={`https://codetweak.example.com/tools/regex-find-replace/${pattern.slug}`} />
   
   <!-- Structured data for rich results -->
   <script type="application/ld+json">
@@ -607,7 +607,7 @@ To optimize the project for GitHub SEO:
 
 ### Quick Start
 
-1. Visit [Regex Helper Tool](https://codetweak.example.com/tools/regex)
+1. Visit [Regex Helper Tool](https://codetweak.example.com/tools/regex-find-replace)
 2. Enter your text in the input area
 3. Press Cmd+K to open the pattern selector
 4. Choose a pattern and press Enter to transform

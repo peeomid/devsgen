@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import type { Pattern } from '../../types/pattern';
-import { toggleCommandPalette } from '../../stores/patternStore';
 
-interface PatternInfoProps {
+interface PatternReferenceProps {
   pattern: Pattern;
   isMobile?: boolean;
 }
 
 /**
- * Collapsible section component for pattern info
+ * Collapsible section component for pattern reference info
  */
 interface CollapsibleSectionProps {
   title: string;
@@ -50,14 +49,14 @@ function CollapsibleSection({ title, defaultExpanded = false, children }: Collap
 }
 
 /**
- * Component to display information about the currently selected pattern
+ * Component to display reference information about the selected pattern
  */
-export default function PatternInfo({ pattern, isMobile = false }: PatternInfoProps) {
+export default function PatternReference({ pattern, isMobile = false }: PatternReferenceProps) {
   const [showDetails, setShowDetails] = useState(false);
   
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
-      {/* Pattern header - always visible */}
+    <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+      {/* Pattern header */}
       <div className="mb-2">
         <div className="flex justify-between items-center mb-1">
           <div className="flex items-center">
@@ -73,10 +72,7 @@ export default function PatternInfo({ pattern, isMobile = false }: PatternInfoPr
               </button>
             )}
             <div className="flex items-center">
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-800 mr-2">
-                {pattern.keyNumber}
-              </span>
-              <h2 className="text-lg font-medium">{pattern.name}</h2>
+              <h2 className="text-lg font-medium text-gray-900">{pattern.name}</h2>
               {isMobile && pattern.category && (
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 ml-2">
                   {pattern.category}
@@ -84,18 +80,11 @@ export default function PatternInfo({ pattern, isMobile = false }: PatternInfoPr
               )}
             </div>
           </div>
-          <button 
-            onClick={() => toggleCommandPalette()}
-            className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 rounded-md text-sm font-medium flex items-center"
-            title="Find pattern"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            Find
-            <span className="ml-2 text-xs opacity-75">⌘K</span>
-          </button>
+          <div className="text-xs text-gray-500">
+            Reference
+          </div>
         </div>
+        
         {!isMobile && pattern.category && (
           <div className="text-sm text-gray-500 mb-2">
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -103,6 +92,7 @@ export default function PatternInfo({ pattern, isMobile = false }: PatternInfoPr
             </span>
           </div>
         )}
+        
         <p className="text-gray-700">{pattern.description}</p>
         
         {/* Short keys */}
@@ -122,12 +112,12 @@ export default function PatternInfo({ pattern, isMobile = false }: PatternInfoPr
         <CollapsibleSection title="Example" defaultExpanded={!isMobile}>
           <div className="mb-2 last:mb-0">
             <div className="text-xs text-gray-500 mb-1">Input:</div>
-            <code className="block p-2 bg-gray-50 rounded text-sm font-mono overflow-x-auto">
+            <code className="block p-2 bg-white rounded text-sm font-mono overflow-x-auto border">
               {pattern.example.input}
             </code>
             
             <div className="text-xs text-gray-500 mt-2 mb-1">Output:</div>
-            <code className="block p-2 bg-gray-50 rounded text-sm font-mono overflow-x-auto">
+            <code className="block p-2 bg-white rounded text-sm font-mono overflow-x-auto border">
               {pattern.example.output}
             </code>
           </div>
@@ -136,11 +126,11 @@ export default function PatternInfo({ pattern, isMobile = false }: PatternInfoPr
       
       {/* Pattern details section - conditionally shown on mobile */}
       {(pattern.searchRegex || pattern.replaceRegex || pattern.flags) && (!isMobile || (isMobile && showDetails)) && (
-        <CollapsibleSection title="Pattern Details" defaultExpanded={!isMobile}>
+        <CollapsibleSection title="Original Pattern" defaultExpanded={!isMobile}>
           {pattern.searchRegex && (
             <div className="mb-2">
               <div className="text-xs text-gray-500 mb-1">Search:</div>
-              <code className="block p-2 bg-gray-50 rounded text-sm font-mono overflow-x-auto">
+              <code className="block p-2 bg-white rounded text-sm font-mono overflow-x-auto border">
                 {pattern.searchRegex}
               </code>
             </div>
@@ -149,7 +139,7 @@ export default function PatternInfo({ pattern, isMobile = false }: PatternInfoPr
           {pattern.replaceRegex && (
             <div className="mb-2">
               <div className="text-xs text-gray-500 mb-1">Replace:</div>
-              <code className="block p-2 bg-gray-50 rounded text-sm font-mono overflow-x-auto">
+              <code className="block p-2 bg-white rounded text-sm font-mono overflow-x-auto border">
                 {pattern.replaceRegex}
               </code>
             </div>
@@ -158,11 +148,24 @@ export default function PatternInfo({ pattern, isMobile = false }: PatternInfoPr
           {pattern.flags && (
             <div>
               <div className="text-xs text-gray-500 mb-1">Flags:</div>
-              <code className="block p-2 bg-gray-50 rounded text-sm font-mono overflow-x-auto">
+              <code className="block p-2 bg-white rounded text-sm font-mono overflow-x-auto border">
                 {pattern.flags}
               </code>
             </div>
           )}
+        </CollapsibleSection>
+      )}
+      
+      {/* Tags section */}
+      {pattern.tags && pattern.tags.length > 0 && (!isMobile || (isMobile && showDetails)) && (
+        <CollapsibleSection title="Tags">
+          <div className="flex flex-wrap gap-1">
+            {pattern.tags.map(tag => (
+              <span key={tag} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                {tag}
+              </span>
+            ))}
+          </div>
         </CollapsibleSection>
       )}
     </div>

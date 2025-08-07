@@ -50,12 +50,34 @@ The application uses a centralized store pattern where:
 ### Key Features
 
 - **Pattern Management** - Create, edit, delete, and search regex patterns
+- **Pattern Modification** - Temporarily modify existing patterns without creating permanent changes (⌘E inline editing)
 - **Quick Access** - Numeric key access and short key lookup for patterns
 - **Pattern Validation** - Comprehensive validation for regex syntax and pattern constraints
 - **Import/Export** - JSON-based pattern sharing
 - **Responsive Layout** - Adaptive vertical/horizontal layouts with hybrid approach
 - **Command Palette** - Keyboard-driven pattern selection (Cmd+K)
 - **Keyboard-Focused Workflow** - Minimal mouse usage required
+
+### Pattern Modification Workflow
+
+The application supports temporary pattern modification with the following user flow:
+
+1. **Pattern Selection**: Use ⌘K to open command palette and select a pattern
+2. **Pattern Display**: Three-panel structure shows:
+   - **PatternSelectorBar**: Current pattern name with Find/Edit buttons
+   - **RegexEditor**: Live regex inputs (search/replace/flags) 
+   - **PatternReference**: Pattern description, examples, and details
+3. **Inline Editing**: Press ⌘E or click Edit button to focus regex input
+4. **Live Modification**: Edit regex directly with real-time validation
+5. **Visual State**: UI shows "Custom Regex (based on Pattern Name)" when modified
+6. **Reference Hiding**: Pattern reference panel hides during modification to avoid confusion
+7. **Auto-Reset**: Switching patterns automatically resets modifications
+
+**Key Design Principles**:
+- Non-destructive: Original patterns never changed
+- State-based UI: Interface adapts based on modification state  
+- Keyboard-first: ⌘E works anytime to start editing
+- Clear visual feedback: Modified state clearly indicated
 
 ### Project Context & SEO Strategy
 
@@ -67,28 +89,40 @@ The application uses a centralized store pattern where:
 ### File Structure Notes
 
 - `src/components/regex/` - React components for regex tool UI
-- `src/pages/tools/regex/` - Astro pages for different regex tool views
+- `src/pages/tools/regex-find-replace/` - Astro pages for different regex tool views
 - `src/data/built-in-patterns.json` - Pre-defined patterns
 - `llm-docs/` - Contains project documentation and architecture notes
 
 ### Component Architecture
 
-The regex tool follows a hierarchical component structure:
+The regex tool follows a hierarchical component structure with a hybrid layout:
 
 ```
 BaseLayout (Astro)
 └── RegexLayout                    # Main container component
-    ├── PatternInfo                # Display pattern details
-    ├── InputArea                  # Text input with auto-resize
-    │   └── ActionButtons          # Transform and action buttons
-    ├── OutputArea                 # Result display
+    ├── Desktop: Split Layout      # Large screens (lg+)
+    │   ├── Left Column            # Input/Output areas
+    │   │   ├── InputArea          # Text input with auto-resize
+    │   │   └── OutputArea         # Result display  
+    │   └── Right Column (400px)   # Three-panel regex structure
+    │       ├── PatternSelectorBar # Current pattern + Find/Edit buttons
+    │       ├── RegexEditor        # Main working area with regex inputs
+    │       └── PatternReference   # Conditional pattern info display
+    ├── Mobile: Stacked Layout     # Small screens
+    │   ├── PatternSelectorBar     # Pattern selection and actions
+    │   ├── RegexEditor            # Regex input fields
+    │   ├── PatternReference       # Collapsible pattern info (mobile)
+    │   ├── InputArea              # Text input
+    │   └── OutputArea             # Result display
     └── CommandPalette             # Pattern search overlay (⌘+K)
 ```
 
 ### UI Design Patterns
 
 - **Hybrid Layout**: Responsive design that adapts between split-view (large screens) and stacked (small screens)
-- **Keyboard-First**: Command palette (Cmd+K), shortcuts for all actions
+- **Keyboard-First**: Command palette (Cmd+K), pattern editing (Cmd+E), shortcuts for all actions
+- **Inline Pattern Editing**: Three-panel structure with inline regex editing and conditional reference info
+- **State-Based UI**: Pattern reference panel hidden during modification to avoid confusion
 - **Post-Transform Actions**: Temporary floating copy button appears after transformations
 - **Pattern Import/Export**: Textarea-based JSON import/export for pattern sharing
 
@@ -98,6 +132,7 @@ The tool is designed for common developer tasks:
 - Convert Python import paths: `app.services.sub` → `app/services/sub`
 - Join multi-line items: `item1\nitem2\nitem3` → `item1,item2,item3`
 - Add quotes to lines: `item1\nitem2` → `"item1"\n"item2"`
+- Quick pattern tweaks: Modify existing patterns temporarily for one-off transformations
 
 ### Important Documentation
 
@@ -107,6 +142,75 @@ The tool is designed for common developer tasks:
 - **Technical Details**: `llm-docs/features/regex/technical.md` - Storage, SEO, and implementation specifics
 - **UI Design**: `llm-docs/features/regex/ui.md` - Layout patterns and interaction flows
 
+### Pattern Preselection from URL Technical Flow
+
+**Critical Implementation Detail:** When users access pattern-specific URLs like `/tools/regex-find-replace/extract-urls`, the pattern must be automatically preselected in the tool. This flow involves multiple components working together:
+
+#### 1. Static Route Generation (`src/pages/tools/regex-find-replace/[pattern_slug].astro`)
+- Astro generates static routes for each built-in pattern during build
+- Routes are created for both pattern IDs and SEO-friendly slugs
+- Pattern data is passed as props to the page component
+
+#### 2. Server-Side Pattern Resolution
+```javascript
+// Find pattern from built-in patterns JSON
+const actualPattern = pattern || builtInPatterns.find((p: Pattern) => 
+  p.id === pattern_slug || p.slug === pattern_slug) as Pattern;
+```
+
+#### 3. Client-Side Pattern Store Initialization
+**CRITICAL:** The dynamic import path in the preselection script must use absolute paths:
+
+```javascript
+<script define:vars={{ patternId: actualPattern.id }}>
+document.addEventListener('DOMContentLoaded', async () => {
+  // ✅ CORRECT: Use absolute path for dynamic imports
+  const { initializePatternStore, selectPattern } = await import('/src/stores/patternStore.ts');
+  
+  // ❌ WRONG: Relative paths cause 404 errors in browser
+  // const { ... } = await import('../../../stores/patternStore');
+  
+  await initializePatternStore();
+  selectPattern(patternId);
+});
+</script>
+```
+
+#### 4. Pattern Store Coordination
+- `initializePatternStore()` loads all patterns from services
+- `selectPattern(patternId)` sets the active pattern in the store
+- React components automatically update via nanostores reactivity
+
+#### 5. Common Pitfalls to Avoid
+- **Relative Import Paths**: Browser dynamic imports require absolute paths from domain root
+- **Initialization Order**: Always call `initializePatternStore()` before `selectPattern()`
+- **State Corruption**: Restart dev server if patterns stop loading during development
+- **Pattern ID vs Slug**: Handle both pattern.id and pattern.slug for URL matching
+
+#### 6. Debugging Pattern Preselection Issues
+1. Check browser console for 404 import errors
+2. Verify pattern exists in `built-in-patterns.json` 
+3. Confirm pattern ID matches the URL parameter exactly
+4. Test with both pattern ID and slug URLs
+5. Restart development server to clear any state corruption
+
 ### Testing
 
 Uses Vitest for unit testing. Run tests with `npm run test` or `npm run test:watch` for development.
+
+**Current Test Coverage:**
+- **Store Tests** - Custom regex state management, pattern selection integration
+- **Component Tests** - PatternSelectorBar, RegexEditor, PatternReference functionality and accessibility  
+- **Pattern Tests** - URL extraction, email extraction, and other regex pattern functionality
+- **36 tests total** - All passing with comprehensive coverage of the three-panel architecture
+
+### Keyboard Shortcuts
+
+| Action | Shortcut | Description |
+|--------|----------|-------------|
+| Open Command Palette | ⌘K | Search and select patterns |
+| Edit Pattern/Focus Regex | ⌘E | Focus search regex input for editing |
+| Transform Text | ⌘Enter | Apply current regex to input text |
+| Copy Output | ⌘⇧C | Copy transformation result |
+| Focus Input Area | ⌘1 | Move cursor to input textarea |
+| Focus Output Area | ⌘2 | Move cursor to output textarea |

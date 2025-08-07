@@ -151,7 +151,7 @@ PatternManager                      # Standalone component for managing patterns
 - Pattern-specific metadata for search engines
 
 ```
-/tools/regex/[patternId].astro
+/tools/regex-find-replace/[patternId].astro
 ```
 
 #### Tool Pages
@@ -163,7 +163,7 @@ PatternManager                      # Standalone component for managing patterns
 
 ### Page Structure
 
-The main Regex Helper Tool page (`/tools/regex/index.astro`) is structured as follows:
+The main Regex Helper Tool page (`/tools/regex-find-replace/index.astro`) is structured as follows:
 
 ```
 <BaseLayout>
@@ -259,10 +259,10 @@ This store-based approach allows components to remain decoupled while sharing st
 
 | File | Path | Function |
 |------|------|----------|
-| `index.astro` | `/src/pages/tools/regex/index.astro` | Main Regex Helper Tool page |
-| `[patternId].astro` | `/src/pages/tools/regex/[patternId].astro` | Dynamic page for each pattern (SEO) |
-| `create.astro` | `/src/pages/tools/regex/create.astro` | Pattern creation page |
-| `manage.astro` | `/src/pages/tools/regex/manage.astro` | Pattern management page |
+| `index.astro` | `/src/pages/tools/regex-find-replace/index.astro` | Main Regex Helper Tool page |
+| `[patternId].astro` | `/src/pages/tools/regex-find-replace/[patternId].astro` | Dynamic page for each pattern (SEO) |
+| `create.astro` | `/src/pages/tools/regex-find-replace/create.astro` | Pattern creation page |
+| `manage.astro` | `/src/pages/tools/regex-find-replace/manage.astro` | Pattern management page |
 
 ### Types
 

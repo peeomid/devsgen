@@ -63,7 +63,7 @@
     - SEO keywords: developer tools, regex helper, keyboard shortcuts, utilities
 
 - [ ] **Create Tool-Specific READMEs**
-  - File: `/Users/luan/Development/Osimify/codetweak/tools/regex/README.md`
+  - File: `/Users/luan/Development/Osimify/codetweak/tools/regex-find-replace/README.md`
   - Purpose: Detailed documentation for the Regex Helper tool that renders when browsing GitHub
   - Implementation details:
     - Title: Regex Helper - Transform Text with Regular Expressions
@@ -213,7 +213,7 @@
       ```
 
 - [ ] **Create Tool Page Route**
-  - File: `/Users/luan/Development/Osimify/codetweak/src/pages/tools/regex/index.astro`
+  - File: `/Users/luan/Development/Osimify/codetweak/src/pages/tools/regex-find-replace/index.astro`
   - Purpose: Main entry point for the regex tool with SEO optimizations
   - Implementation details:
     - Import BaseLayout and RegexHelperApp component
