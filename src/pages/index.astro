@@ -1,4 +1,262 @@
 ---
-// Server-side redirect to tools page
-return Astro.redirect('/tools');
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// SEO metadata for homepage
+const title = "Privacy-First Developer Utilities for Text Processing";
+const description = "Free online tools for regex patterns, text filtering, and data transformation. Client-side processing, keyboard shortcuts, 50+ built-in patterns. No signup required.";
+
+// Define featured tools
+const featuredTools = [
+  {
+    id: "regex",
+    name: "Regex Helper",
+    description: "Find and replace text with regex patterns. 50+ built-in patterns for bulk transformations.",
+    icon: "code",
+    url: "/tools/regex-find-replace",
+    keyFeatures: ["50+ built-in patterns", "Live preview", "Keyboard shortcuts"],
+    useCase: "Convert camelCase to kebab-case in seconds"
+  },
+  {
+    id: "line-filter",
+    name: "Line Filter Tool", 
+    description: "Filter any text file - logs, CSV, data dumps. See only the lines you need.",
+    icon: "filter",
+    url: "/tools/line-filter",
+    keyFeatures: ["CSV support", "Multiple filters", "Export results"],
+    useCase: "Clean up CSV exports from databases",
+    isNew: true
+  }
+];
+
+// Developer use cases
+const useCases = [
+  "Transform API responses for frontend consumption",
+  "Convert between naming conventions across codebases", 
+  "Extract emails, URLs, and data patterns from logs",
+  "Format and clean data exports"
+];
+
+// Technical features
+const features = [
+  {
+    icon: "shield",
+    title: "Client-side Only",
+    description: "Your data never leaves your browser"
+  },
+  {
+    icon: "lightning",
+    title: "Instant Results", 
+    description: "No server delays or rate limits"
+  },
+  {
+    icon: "keyboard",
+    title: "Keyboard-first",
+    description: "Built for developer workflows"
+  },
+  {
+    icon: "offline",
+    title: "Always Available",
+    description: "Works offline after first load"
+  }
+];
 ---
+
+<BaseLayout title={title} description={description}>
+  <!-- Hero Section -->
+  <section class="text-center py-16 lg:py-24">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+        Developer Utilities That <span class="text-primary">Actually Save Time</span>
+      </h1>
+      <p class="text-xl lg:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+        Privacy-first tools for regex patterns, text filtering, and data transformation. No servers, just results.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/tools" class="inline-flex items-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors">
+          Start Using Tools
+          <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+        <a href="https://github.com/peeomid/devsgen" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-primary hover:text-primary transition-colors">
+          <svg class="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+          </svg>
+          View on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Devsgen Section -->
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Devsgen?</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Built by developers, for developers. Every feature designed to streamline your workflow.
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {features.map(feature => (
+          <div class="text-center">
+            <div class="flex justify-center mb-4">
+              {feature.icon === "shield" && (
+                <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+              )}
+              {feature.icon === "lightning" && (
+                <div class="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              )}
+              {feature.icon === "keyboard" && (
+                <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                  </svg>
+                </div>
+              )}
+              {feature.icon === "offline" && (
+                <div class="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
+            <p class="text-gray-600">{feature.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Tools Section -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Tools</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Powerful utilities designed for common developer tasks
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {featuredTools.map(tool => (
+          <a href={tool.url} class="group block">
+            <div class="h-full p-8 bg-white rounded-xl border-2 border-gray-200 hover:border-primary hover:shadow-lg transition-all">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center">
+                  {tool.icon === "code" && (
+                    <div class="flex-shrink-0 h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-primary">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                    </div>
+                  )}
+                  {tool.icon === "filter" && (
+                    <div class="flex-shrink-0 h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                      </svg>
+                    </div>
+                  )}
+                  <h3 class="ml-4 text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors">{tool.name}</h3>
+                </div>
+                {tool.isNew && (
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    New
+                  </span>
+                )}
+              </div>
+              
+              <p class="text-gray-600 mb-4 text-lg leading-relaxed">{tool.description}</p>
+              
+              <div class="mb-4">
+                <p class="text-sm font-medium text-gray-500 mb-2">Example use case:</p>
+                <p class="text-primary font-medium italic">"{tool.useCase}"</p>
+              </div>
+              
+              <div class="flex flex-wrap gap-2">
+                {tool.keyFeatures.map(feature => (
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">
+                    {feature}
+                  </span>
+                ))}
+              </div>
+              
+              <div class="mt-6 flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform">
+                Try it now
+                <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Developer Use Cases Section -->
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8">Built for Real Developer Workflows</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {useCases.map(useCase => (
+          <div class="flex items-center p-4 bg-white rounded-lg shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-gray-700 text-left">{useCase}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Trust Signals -->
+  <section class="py-16">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8">Open Source & Developer-Friendly</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="text-3xl font-bold text-primary mb-2">TypeScript</div>
+          <p class="text-gray-600">Built with type safety and modern web standards</p>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-primary mb-2">No Registration</div>
+          <p class="text-gray-600">Start using immediately, no accounts or setup required</p>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-primary mb-2">Open Source</div>
+          <p class="text-gray-600">MIT licensed, contribute on GitHub</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-16 bg-primary text-white">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4">Ready to Boost Your Productivity?</h2>
+      <p class="text-xl mb-8 text-primary-100">
+        Join developers who save hours every week with Devsgen utilities
+      </p>
+      <a href="/tools" class="inline-flex items-center px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors">
+        Explore All Tools
+        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
