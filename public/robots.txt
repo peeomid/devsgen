@@ -2,5 +2,5 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://CodeTweak.osimify.com/sitemap-index.xml
-Sitemap: https://CodeTweak.osimify.com/sitemap.xml
+Sitemap: https://devsgen.com/sitemap-index.xml
+Sitemap: https://devsgen.com/sitemap.xml

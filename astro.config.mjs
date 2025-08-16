@@ -12,7 +12,7 @@ export default defineConfig({
     sitemap() // Generate sitemap.xml
   ],
   // Configure site URL for production
-  site: 'https://CodeTweak.osimify.com',
+  site: 'https://devsgen.com',
   // Static build for better performance
   output: 'static',
   // Configure build options

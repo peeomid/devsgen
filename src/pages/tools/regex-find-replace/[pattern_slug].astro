@@ -37,20 +37,20 @@ function generateSeoTitle(pattern: Pattern): string {
   
   // Create search-intent focused titles for common patterns
   if (name.includes('camel') && name.includes('kebab')) {
-    return `Search and Replace CamelCase to kebab-case Online - Regex Tool | CodeTweak`;
+    return `Search and Replace CamelCase to kebab-case Online - Regex Tool | Devsgen`;
   }
   if (name.includes('camel') && name.includes('snake')) {
-    return `Search and Replace CamelCase to snake_case Online - Regex Tool | CodeTweak`;
+    return `Search and Replace CamelCase to snake_case Online - Regex Tool | Devsgen`;
   }
   if (name.includes('slash') && name.includes('dot')) {
-    return `Search and Replace Slash with Dot Online - Regex Tool | CodeTweak`;
+    return `Search and Replace Slash with Dot Online - Regex Tool | Devsgen`;
   }
   if (name.includes('dot') && name.includes('slash')) {
-    return `Search and Replace Dot with Slash Online - Regex Tool | CodeTweak`;
+    return `Search and Replace Dot with Slash Online - Regex Tool | Devsgen`;
   }
   
   // Default format for other patterns
-  return `${pattern.name} - Online Regex Tool | CodeTweak`;
+  return `${pattern.name} - Online Regex Tool | Devsgen`;
 }
 
 function generateSeoDescription(pattern: Pattern): string {
@@ -92,7 +92,7 @@ const pageUrl = `/tools/regex-find-replace/${pattern_slug}`;
     "url": `https://codetweak.com/tools/regex-find-replace/${isCanonical !== false ? actualPattern.id : canonicalId}`,
     "creator": {
       "@type": "Organization",
-      "name": "CodeTweak"
+      "name": "Devsgen"
     }
   })} />
 

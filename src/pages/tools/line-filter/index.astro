@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import LineFilterLayout from '../../../components/line-filter/LineFilterLayout.tsx';
+
+const title = 'Line Filter Tool - Devsgen';
+const description = 'Filter and search through large text files and CSV data efficiently. Supports include/exclude patterns, regex, and column-specific filtering for CSV files.';
+---
+
+<BaseLayout title={title} description={description}>
+  <LineFilterLayout client:load />
+</BaseLayout>

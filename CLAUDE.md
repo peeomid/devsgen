@@ -2,7 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**CodeTweak** is a collection of developer utilities designed to streamline common tasks and boost productivity.
+**Devsgen** is a collection of developer utilities designed to streamline common tasks and boost productivity.
+
+## Available Tools
+
+1. **Regex Find & Replace Tool** (`/tools/regex-find-replace/`) - Pattern management and text transformation
+2. **Line Filter Tool** (`/tools/line-filter/`) - Filter and search through large text files and CSV data
 
 ## Development Commands
 
@@ -17,7 +22,7 @@ All commands are run from the root directory:
 
 ## Architecture Overview
 
-This is an **Astro application** that provides a regex pattern management and transformation tool as part of the CodeTweak developer utilities collection. The application uses:
+This is an **Astro application** that provides multiple developer utilities including regex pattern management and line filtering tools as part of the Devsgen collection. The application uses:
 
 - **Astro** with React components for the UI
 - **Nanostores** for state management
