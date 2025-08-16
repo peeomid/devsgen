@@ -10,7 +10,7 @@ const tools = [
   {
     id: "regex",
     name: "Regex Helper",
-    description: "Transform text using regular expressions with built-in patterns or create your own.",
+    description: "Find and replace text with regex patterns. 50+ built-in patterns for bulk transformations.",
     icon: "code",
     url: "/tools/regex-find-replace",
     isNew: false
@@ -18,9 +18,17 @@ const tools = [
   {
     id: "line-filter",
     name: "Line Filter Tool",
-    description: "Filter and search through large text files and CSV data efficiently with powerful filtering options.",
+    description: "Filter any text file - logs, CSV, data dumps. See only the lines you need.",
     icon: "filter",
     url: "/tools/line-filter",
+    isNew: false
+  },
+  {
+    id: "json-viewer",
+    name: "JSON Viewer",
+    description: "Load, view, filter, and analyze JSON data with an interactive tree view.",
+    icon: "json",
+    url: "/tools/json-viewer",
     isNew: true
   }
   // More tools will be added here in the future
@@ -53,6 +61,13 @@ const tools = [
                   <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                  </div>
+                )}
+                {tool.icon === "json" && (
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
                 )}

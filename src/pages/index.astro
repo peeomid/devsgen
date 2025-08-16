@@ -14,7 +14,7 @@ const featuredTools = [
     icon: "code",
     url: "/tools/regex-find-replace",
     keyFeatures: ["50+ built-in patterns", "Live preview", "Keyboard shortcuts"],
-    useCase: "Convert camelCase to kebab-case in seconds"
+    useCase: "Transform 100 variable names from camelCase to snake_case instantly"
   },
   {
     id: "line-filter",
@@ -23,7 +23,7 @@ const featuredTools = [
     icon: "filter",
     url: "/tools/line-filter",
     keyFeatures: ["CSV support", "Multiple filters", "Export results"],
-    useCase: "Clean up CSV exports from databases",
+    useCase: "Find error lines in 50,000-line server logs instantly",
     isNew: true
   }
 ];
@@ -206,22 +206,7 @@ const features = [
     </div>
   </section>
 
-  <!-- Developer Use Cases Section -->
-  <section class="py-16 bg-gray-50">
-    <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-3xl font-bold text-gray-900 mb-8">Built for Real Developer Workflows</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {useCases.map(useCase => (
-          <div class="flex items-center p-4 bg-white rounded-lg shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            <span class="text-gray-700 text-left">{useCase}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
+
 
   <!-- Technical Trust Signals -->
   <section class="py-16">
