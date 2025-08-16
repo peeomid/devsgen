@@ -47,21 +47,37 @@ export const FilterList: React.FC<FilterListProps> = ({
   }, []);
 
   const getFilterDisplayName = (filter: TextFilter | CSVFilter): string => {
-    const baseInfo = `${filter.type} "${filter.pattern}"`;
+    // Handle multiple patterns (OR logic)
+    const patterns = filter.patterns && filter.patterns.length > 0 ? filter.patterns : [filter.pattern];
     
-    if ('scope' in filter && filter.scope === 'column') {
-      const columnInfo = filter.columnName || `Column ${(filter.columnIndex || 0) + 1}`;
-      return `${baseInfo} in ${columnInfo}`;
+    if (patterns.length === 1) {
+      // Single pattern - show normally
+      return patterns[0];
+    } else {
+      // Multiple patterns - show all with OR
+      return patterns.join(' OR ');
     }
-    
-    return baseInfo;
   };
 
-  const getFilterOptions = (filter: TextFilter | CSVFilter): string[] => {
-    const options: string[] = [];
+  const getFilterTooltip = (filter: TextFilter | CSVFilter): string => {
+    // Build tooltip with context info (not patterns since they're now visible)
+    const type = filter.type.charAt(0).toUpperCase() + filter.type.slice(1);
+    
+    let scope = 'All columns';
+    if ('scope' in filter && filter.scope === 'column') {
+      scope = filter.columnName || `Column ${(filter.columnIndex || 0) + 1}`;
+    }
+    
+    const options = [];
     if (filter.caseSensitive) options.push('Case sensitive');
     if (filter.useRegex) options.push('Regex');
-    return options;
+    
+    let tooltip = `${type} in ${scope}`;
+    if (options.length > 0) {
+      tooltip += ` • ${options.join(', ')}`;
+    }
+    
+    return tooltip;
   };
 
   if (filterArray.length === 0) {
@@ -122,14 +138,9 @@ export const FilterList: React.FC<FilterListProps> = ({
                     onChange={() => handleToggleFilter(filter.id)}
                     className="w-3 h-3 rounded"
                   />
-                  <span className="truncate max-w-32" title={getFilterDisplayName(filter)}>
+                  <span className="truncate max-w-32" title={getFilterTooltip(filter)}>
                     {getFilterDisplayName(filter)}
                   </span>
-                  {result && (
-                    <span className="text-xs opacity-75">
-                      ({result.totalMatches})
-                    </span>
-                  )}
                   
                   {/* Quick Actions */}
                   <div className="flex items-center space-x-0.5">

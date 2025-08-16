@@ -4,6 +4,7 @@ import type { Line, CSVLine } from '../types/database';
 export interface FilterWorkerOptions {
   filterId: string;
   pattern: string;
+  patterns?: string[]; // Add patterns array for OR logic
   filterType: 'include' | 'exclude';
   caseSensitive: boolean;
   useRegex: boolean;

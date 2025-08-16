@@ -1,6 +1,7 @@
 export interface TextFilter {
   id: string;
-  pattern: string;
+  pattern: string; // Kept for backward compatibility
+  patterns?: string[]; // New field for OR logic support
   type: 'include' | 'exclude';
   caseSensitive: boolean;
   useRegex: boolean;

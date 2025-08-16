@@ -276,6 +276,7 @@ export const lineFilterActions = {
       const options = {
         filterId: filter.id,
         pattern: filter.pattern,
+        patterns: filter.patterns, // Add patterns array for OR logic
         filterType: filter.type,
         caseSensitive: filter.caseSensitive,
         useRegex: filter.useRegex,

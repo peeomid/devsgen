@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { lineFilterActions, activeFilters, dataType, csvHeaders, canFilter } from '../../stores/lineFilterStore';
 import type { CSVFilter } from '../../types/filters';
+import { PatternTagInput, type Pattern } from './PatternTagInput';
 
 export interface CSVFilterInputProps {
   className?: string;
@@ -16,13 +17,12 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
   editingFilterId,
   onEditComplete
 }) => {
-  const [pattern, setPattern] = useState('');
+  const [patterns, setPatterns] = useState<Pattern[]>([]);
   const [filterType, setFilterType] = useState<'include' | 'exclude'>('include');
   const [caseSensitive, setCaseSensitive] = useState(false);
   const [useRegex, setUseRegex] = useState(false);
   const [scope, setScope] = useState<'all' | 'column'>('all');
   const [selectedColumn, setSelectedColumn] = useState<number>(-1);
-  const [isValid, setIsValid] = useState(true);
   const [validationError, setValidationError] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -36,14 +36,26 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
     if (editingFilterId) {
       const filterToEdit = filters[editingFilterId] as CSVFilter;
       if (filterToEdit && 'scope' in filterToEdit) {
-        setPattern(filterToEdit.pattern);
+        // Convert single pattern to pattern array for backward compatibility
+        const filterPatterns = Array.isArray(filterToEdit.patterns) 
+          ? filterToEdit.patterns.map((p, index) => ({
+              id: `pattern_${index}_${Date.now()}`,
+              value: p,
+              isValid: true
+            }))
+          : [{
+              id: `pattern_0_${Date.now()}`,
+              value: filterToEdit.pattern,
+              isValid: true
+            }];
+        
+        setPatterns(filterPatterns);
         setFilterType(filterToEdit.type);
         setCaseSensitive(filterToEdit.caseSensitive);
         setUseRegex(filterToEdit.useRegex);
         setScope(filterToEdit.scope);
         setSelectedColumn(filterToEdit.columnIndex || -1);
         setIsEditMode(true);
-        setIsValid(true);
         setValidationError('');
       }
     } else {
@@ -59,38 +71,26 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
     }));
   }, [headers]);
 
-  const validatePattern = useCallback((value: string, regex: boolean): boolean => {
+  const validatePattern = useCallback((value: string): { isValid: boolean; error?: string } => {
     if (!value.trim()) {
-      setValidationError('Pattern cannot be empty');
-      return false;
+      return { isValid: false, error: 'Pattern cannot be empty' };
     }
 
-    if (regex) {
+    if (useRegex) {
       try {
         new RegExp(value);
       } catch (error) {
-        setValidationError(`Invalid regex: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        return false;
+        return { isValid: false, error: `Invalid regex: ${error instanceof Error ? error.message : 'Unknown error'}` };
       }
     }
 
+    return { isValid: true };
+  }, [useRegex]);
+
+  const handlePatternsChange = useCallback((newPatterns: Pattern[]) => {
+    setPatterns(newPatterns);
     setValidationError('');
-    return true;
   }, []);
-
-  const handlePatternChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPattern(value);
-    const valid = validatePattern(value, useRegex);
-    setIsValid(valid);
-  }, [useRegex, validatePattern]);
-
-  const handleRegexToggle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const regex = e.target.checked;
-    setUseRegex(regex);
-    const valid = validatePattern(pattern, regex);
-    setIsValid(valid);
-  }, [pattern, validatePattern]);
 
   const handleScopeChange = useCallback((newScope: 'all' | 'column') => {
     setScope(newScope);
@@ -106,13 +106,23 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
   }, []);
 
   const handleAddFilter = useCallback(async () => {
-    if (!pattern.trim() || !isValid || !currentCanFilter) return;
+    if (patterns.length === 0 || !currentCanFilter) return;
     if (scope === 'column' && (selectedColumn === -1 || selectedColumn >= headers.length)) return;
+
+    // Validate all patterns
+    const hasInvalidPatterns = patterns.some(p => !p.isValid);
+    if (hasInvalidPatterns) {
+      setValidationError('Please fix invalid patterns before adding filter');
+      return;
+    }
+
+    const patternValues = patterns.map(p => p.value);
 
     if (isEditMode && editingFilterId) {
       // Update existing filter
       const updates: Partial<CSVFilter> = {
-        pattern: pattern.trim(),
+        patterns: patternValues,
+        pattern: patternValues[0], // Keep backward compatibility
         type: filterType,
         caseSensitive,
         useRegex,
@@ -127,8 +137,7 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
         await lineFilterActions.applyFilter(editingFilterId);
         
         // Reset form and exit edit mode
-        setPattern('');
-        setIsValid(true);
+        setPatterns([]);
         setValidationError('');
         setIsEditMode(false);
         onEditComplete?.();
@@ -140,7 +149,8 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
       // Add new filter
       const filter: CSVFilter = {
         id: generateFilterId(),
-        pattern: pattern.trim(),
+        patterns: patternValues,
+        pattern: patternValues[0], // Keep backward compatibility
         type: filterType,
         caseSensitive,
         useRegex,
@@ -156,34 +166,26 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
         onFilterAdded?.(filter);
 
         // Reset form only if filter was successfully added
-        setPattern('');
-        setIsValid(true);
+        setPatterns([]);
         setValidationError('');
       } catch (error) {
         console.error('Failed to add filter:', error);
         setValidationError('Failed to add filter. Please try again.');
       }
     }
-  }, [pattern, filterType, caseSensitive, useRegex, scope, selectedColumn, headers, isValid, currentCanFilter, generateFilterId, onFilterAdded, isEditMode, editingFilterId, onEditComplete]);
+  }, [patterns, filterType, caseSensitive, useRegex, scope, selectedColumn, headers, currentCanFilter, generateFilterId, onFilterAdded, isEditMode, editingFilterId, onEditComplete]);
 
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddFilter();
-    }
-  }, [handleAddFilter]);
 
   if (currentDataType !== 'csv') {
     return null;
   }
 
   const activeFilterCount = Object.keys(filters).length;
-  const canSubmit = pattern.trim() && isValid && currentCanFilter && 
+  const canSubmit = patterns.length > 0 && patterns.every(p => p.isValid) && currentCanFilter && 
     (scope === 'all' || (scope === 'column' && selectedColumn >= 0));
 
   const handleCancelEdit = useCallback(() => {
-    setPattern('');
-    setIsValid(true);
+    setPatterns([]);
     setValidationError('');
     setScope('all');
     setSelectedColumn(-1);
@@ -193,24 +195,20 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
 
   return (
     <div className={`${className}`}>
-      {/* Compact Single-Line Filter Input */}
+      {/* Pattern Tag Input */}
+      <div className="mb-2">
+        <PatternTagInput
+          patterns={patterns}
+          onPatternsChange={handlePatternsChange}
+          onAddFilter={handleAddFilter}
+          placeholder="CSV filter pattern..."
+          disabled={!currentCanFilter}
+          className=""
+        />
+      </div>
+
+      {/* Filter Options */}
       <div className="flex items-center space-x-2">
-        {/* Pattern Input - Primary */}
-        <div className="flex-1 min-w-0">
-          <input
-            type="text"
-            value={pattern}
-            onChange={handlePatternChange}
-            onKeyDown={handleKeyPress}
-            placeholder="Filter pattern..."
-            className={`w-full px-3 py-1.5 text-sm border rounded-md focus:outline-none focus:ring-1 ${
-              !isValid 
-                ? 'border-red-300 focus:ring-red-500' 
-                : 'border-gray-300 focus:ring-blue-500'
-            }`}
-            disabled={!currentCanFilter}
-          />
-        </div>
 
         {/* Type Toggle */}
         <select
@@ -281,10 +279,10 @@ export const CSVFilterInput: React.FC<CSVFilterInputProps> = ({
         <button
           type="button"
           onClick={handleAddFilter}
-          disabled={!isValid || !pattern.trim() || !currentCanFilter}
+          disabled={!canSubmit}
           className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isEditMode ? 'Update' : 'Add'}
+          {isEditMode ? 'Update Filter' : 'Add Filter'}
         </button>
 
         {isEditMode && (

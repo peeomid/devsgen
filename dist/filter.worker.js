@@ -45,6 +45,7 @@ function performFilter(payload) {
     const {
       filterId,
       pattern,
+      patterns,
       filterType,
       caseSensitive,
       useRegex,
@@ -62,18 +63,20 @@ function performFilter(payload) {
     const totalLines = currentData.length;
     let processedLines = 0;
     
-    // Create regex or simple string matcher
-    let matcher;
+    // Create matchers array for OR logic support
+    const patternsToUse = patterns && patterns.length > 0 ? patterns : [pattern];
+    let matchers = [];
+    
     if (useRegex) {
       try {
         const flags = caseSensitive ? 'g' : 'gi';
-        matcher = new RegExp(pattern, flags);
+        matchers = patternsToUse.map(p => new RegExp(p, flags));
       } catch (regexError) {
         sendError(`Invalid regex pattern: ${regexError.message}`);
         return;
       }
     } else {
-      matcher = caseSensitive ? pattern : pattern.toLowerCase();
+      matchers = patternsToUse.map(p => caseSensitive ? p : p.toLowerCase());
     }
     
     // Process lines in chunks to allow for progress updates
@@ -102,13 +105,20 @@ function performFilter(payload) {
         
         let isMatch = false;
         
-        if (useRegex && matcher instanceof RegExp) {
-          isMatch = matcher.test(textToSearch);
-          // Reset regex for next test
-          matcher.lastIndex = 0;
+        // Test against all patterns (OR logic)
+        if (useRegex) {
+          isMatch = matchers.some(matcher => {
+            if (matcher instanceof RegExp) {
+              const result = matcher.test(textToSearch);
+              // Reset regex for next test
+              matcher.lastIndex = 0;
+              return result;
+            }
+            return false;
+          });
         } else {
           const searchText = caseSensitive ? textToSearch : textToSearch.toLowerCase();
-          isMatch = searchText.includes(matcher);
+          isMatch = matchers.some(matcher => searchText.includes(matcher));
         }
         
         // Apply include/exclude logic
