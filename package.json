@@ -21,6 +21,8 @@
     "@nanostores/react": "^0.7.2",
     "astro": "^5.12.7",
     "dexie": "^4.0.11",
+    "jsonpath-plus": "^10.3.0",
+    "nanoid": "^5.1.5",
     "nanostores": "^0.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
