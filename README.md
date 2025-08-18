@@ -1,15 +1,15 @@
-# CodeTweak
+# Devsgen
 
-> A collection of developer utilities designed to streamline common tasks and boost productivity.
+> Privacy-first developer utilities designed to streamline common tasks and boost productivity.
 
 [![Built with Astro](https://img.shields.io/badge/Built%20with-Astro-ff5d01?logo=astro)](https://astro.build)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-**CodeTweak** is a collection of tools designed to help developers streamline common tasks and boost productivity. Each tool is designed with a focus on usability, performance, and keyboard-driven workflows.
+**Devsgen** is a collection of tools designed to help developers streamline common tasks and boost productivity. Each tool is designed with a focus on usability, performance, and keyboard-driven workflows.
 
-🌐 **Live Site**: [CodeTweak.osimify.com](https://CodeTweak.osimify.com)
+🌐 **Live Site**: [devsgen.com](https://devsgen.com)
 
 ## ✨ Features
 
@@ -23,7 +23,7 @@
 ## 🛠️ Available Tools
 
 ### Regex Helper
-Transform text using regular expressions with built-in patterns or create your own.
+Find and replace text with regex patterns. 50+ built-in patterns for bulk transformations.
 
 - **Quick Access**: Numeric key access and short key lookup
 - **Pattern Management**: Create, edit, delete, and search regex patterns
@@ -31,12 +31,24 @@ Transform text using regular expressions with built-in patterns or create your o
 - **Command Palette**: Keyboard-driven pattern selection (Cmd+K)
 - **Hybrid Layout**: Responsive design that adapts to screen size
 
-**Common Use Cases:**
-- Convert Python import paths: `app.services.sub` → `app/services/sub`
-- Join multi-line items: `item1\nitem2\nitem3` → `item1,item2,item3`
-- Add quotes to lines: `item1\nitem2` → `"item1"\n"item2"`
+**Example Use Case:**
+- Transform 100 variable names from camelCase to snake_case instantly
 
-[🔗 Try Regex Helper](https://CodeTweak.osimify.com/tools/regex-find-replace)
+[🔗 Try Regex Helper](https://devsgen.com/tools/regex-find-replace)
+
+### Line Filter Tool
+Filter any text file - logs, CSV, data dumps. See only the lines you need.
+
+- **Large File Support**: Handle big datasets without memory issues
+- **Multiple Filters**: Apply complex filtering logic
+- **Export Results**: Save filtered data for further processing
+- **CSV Support**: Work with structured data files
+- **Client-side Processing**: Your data stays private
+
+**Example Use Case:**
+- Find error lines in 50,000-line server logs instantly
+
+[🔗 Try Line Filter](https://devsgen.com/tools/line-filter)
 
 ## 🚀 Getting Started
 
@@ -48,10 +60,10 @@ Transform text using regular expressions with built-in patterns or create your o
 
 ```bash
 # Clone the repository
-git clone https://github.com/peeomid/CodeTweak.git
+git clone https://github.com/peeomid/devsgen.git
 
 # Navigate to the project directory
-cd CodeTweak
+cd devsgen
 
 # Install dependencies
 npm install
@@ -79,7 +91,7 @@ All commands are run from the root of the project:
 ## 🏗️ Project Structure
 
 ```
-CodeTweak/
+devsgen/
 ├── src/
 │   ├── components/
 │   │   ├── common/              # Shared components
@@ -104,7 +116,7 @@ CodeTweak/
 
 ## 🏛️ Architecture
 
-CodeTweak is built with:
+Devsgen is built with:
 - **Astro** - Static site generator with islands architecture
 - **React** - Interactive UI components
 - **TypeScript** - Type-safe development
