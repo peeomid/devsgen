@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import JSONViewerLayout from '../../../components/json-viewer/JSONViewerLayout';
+
+const title = 'JSON Viewer - Devsgen';
+const description = 'Load, view, filter, and analyze JSON data with an interactive tree view and powerful filtering capabilities.';
+---
+
+<BaseLayout title={title} description={description}>
+  <JSONViewerLayout client:load />
+</BaseLayout>
