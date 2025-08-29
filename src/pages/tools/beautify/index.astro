@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BeautifyLayout from '../../../components/beautify/BeautifyLayout.tsx';
+
+const title = 'Code Beautifier - Devsgen';
+const description = 'Format and beautify JSON-like structures, Python repr, PHP arrays, and more with a generic bracket-based formatter. No heavy parsing libraries required.';
+---
+
+<BaseLayout title={title} description={description}>
+  <BeautifyLayout client:load />
+</BaseLayout>

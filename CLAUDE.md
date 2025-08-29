@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 1. **Regex Find & Replace Tool** (`/tools/regex-find-replace/`) - Pattern management and text transformation
 2. **Line Filter Tool** (`/tools/line-filter/`) - Filter and search through large text files and CSV data
+3. **Code Beautifier Tool** (`/tools/beautify/`) - Generic code formatting for JSON, Python repr, PHP arrays, and unknown structures
 
 ## Development Commands
 
@@ -37,7 +38,8 @@ The application follows a service-oriented architecture with clear separation of
 1. **PatternService** (`src/services/PatternService.ts`) - Core business logic for pattern CRUD operations, search, and validation
 2. **PatternStorageManager** (`src/services/PatternStorageManager.ts`) - Handles localStorage persistence
 3. **RegexService** (`src/services/RegexService.ts`) - Handles regex transformation operations
-4. **Pattern Store** (`src/stores/patternStore.ts`) - Nanostores-based state management that orchestrates services
+4. **BracketFormatterService** (`src/services/BracketFormatterService.ts`) - Code formatting using bracket-based indentation with PHP var_dump support
+5. **Pattern Store** (`src/stores/patternStore.ts`) - Nanostores-based state management that orchestrates services
 
 ### Key Data Structures
 
@@ -219,3 +221,11 @@ Uses Vitest for unit testing. Run tests with `npm run test` or `npm run test:wat
 | Copy Output | ⌘⇧C | Copy transformation result |
 | Focus Input Area | ⌘1 | Move cursor to input textarea |
 | Focus Output Area | ⌘2 | Move cursor to output textarea |
+
+### Code Beautifier Architecture
+
+**CRITICAL**: Keep formatting logic in services, not view components.
+- Formatting logic: `src/services/BracketFormatterService.ts` 
+- Legacy beautifier: `src/lib/beautify/` (for tests)
+- View components: Only orchestrate service calls
+- Tests: Must test services directly, not view logic
