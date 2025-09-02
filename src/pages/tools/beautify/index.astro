@@ -1,11 +1,91 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import BeautifyLayout from '../../../components/beautify/BeautifyLayout.tsx';
 
 const title = 'Code Beautifier - Devsgen';
-const description = 'Format and beautify JSON-like structures, Python repr, PHP arrays, and more with a generic bracket-based formatter. No heavy parsing libraries required.';
+const description = 'Format and beautify JSON-like structures, Python repr, PHP arrays, and more with a generic bracket-based formatter. Runs in a Web Worker for a responsive UI.';
 ---
 
 <BaseLayout title={title} description={description}>
-  <BeautifyLayout client:load />
+  <div class="min-h-screen bg-slate-50 p-6">
+    <div class="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <h1 class="text-2xl font-semibold tracking-tight">Generic Code Beautifier</h1>
+        <p class="text-sm text-slate-600">
+          Paste JSON/JSON5/HJSON, Python <code>repr</code>, PHP <code>array/print_r/var_export/var_dump</code>. Formatting runs off-thread in a Web Worker.
+        </p>
+
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200">
+          <div class="p-4 space-y-3">
+            <div class="flex items-center gap-3">
+              <label class="text-xs font-medium w-20">Mode</label>
+              <span id="detectedBadge" class="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">unknown</span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <label class="text-xs font-medium w-20" for="indent">Indent</label>
+              <input id="indent" class="w-24 border border-slate-300 rounded-md p-2 bg-white" type="number" min="0" value="2" />
+              <label class="text-xs font-medium" for="useTabs">
+                <input id="useTabs" type="checkbox" class="mr-2" /> Use tabs
+              </label>
+            </div>
+
+            <textarea
+              id="input"
+              class="h-[360px] w-full font-mono text-sm border border-slate-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              placeholder="Paste anything here…"
+            >{`Paste anything here…
+
+Examples:
+
+// JSON with single quotes
+{ 'a': 1, 'b': [1,2,3,], // trailing comma ok
+  'user': { 'name': 'Alice', 'active': true, 'email': null } }
+
+# Python repr
+{'users': [{'id': 1, 'name': 'Alice'}, {'id': 2, 'name': 'Bob'}], 'ok': True}
+
+// PHP var_export
+array ( 'foo' => 'bar', 0 => 10, 'nested' => array( 'x' => 1, 'y' => 2 ), )
+
+// PHP var_dump-ish
+array(2) {
+  ["id"]=>
+  int(42)
+  ["tags"]=>
+  array(3) { [0]=> string(3) "one" [1]=> string(3) "two" [2]=> string(5) "three" }
+}`}</textarea>
+
+            <div class="flex items-center gap-3">
+              <button id="formatBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors">
+                Beautify
+              </button>
+              <div class="flex items-center gap-2 ml-auto text-xs text-slate-600">
+                <div id="progressBar" class="h-2 w-40 bg-slate-200 rounded overflow-hidden">
+                  <div id="progressFill" class="h-2 w-0 bg-blue-500"></div>
+                </div>
+                <span id="progressLabel">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200">
+          <div class="p-4">
+            <pre id="output" class="whitespace-pre-wrap font-mono text-sm leading-6"></pre>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200">
+          <div class="p-4 space-y-2 text-sm text-slate-600">
+            <div class="font-medium">Diagnostics</div>
+            <pre id="diagnostics" class="whitespace-pre-wrap text-xs"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./beautify.client.ts"></script>
 </BaseLayout>
