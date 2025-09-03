@@ -35,5 +35,54 @@ describe('phpish var_dump formatting (exact case)', () => {
 
     expect(result.output).toBe(expected);
   });
+
+  it('ensures proper array spacing and concatenated entry splitting', () => {
+    const input = 'array(3){[0]=>string(1)"a"[1]=>int(42)[2]=>bool(true)}';
+    
+    const result = beautify(input, {
+      mode: 'phpish',
+      indent: 2,
+      useTabs: false,
+      newlineAfterComma: true,
+      keepComments: true,
+      conservative: false,
+    });
+
+    const expected = [
+      'array(3) {',
+      '  [0] => string(1) "a"',
+      '  [1] => int(42)',
+      '  [2] => bool(true)',
+      '}',
+      '',
+    ].join('\n');
+
+    expect(result.output).toBe(expected);
+  });
+
+  it('handles nested arrays with proper indentation', () => {
+    const input = 'array(1){["nested"]=>array(2){["a"]=>int(1)["b"]=>string(4)"test"}}';
+    
+    const result = beautify(input, {
+      mode: 'phpish',
+      indent: 2,
+      useTabs: false,
+      newlineAfterComma: true,
+      keepComments: true,
+      conservative: false,
+    });
+
+    const expected = [
+      'array(1) {',
+      '  ["nested"] => array(2) {',
+      '    ["a"] => int(1)',
+      '    ["b"] => string(4) "test"',
+      '  }',
+      '}',
+      '',
+    ].join('\n');
+
+    expect(result.output).toBe(expected);
+  });
 });
 

@@ -1,6 +1,7 @@
 import type { BeautifyOptions, BeautifyResult, BeautifyDiagnostics } from '../../types/beautify.ts';
 import { BracketFormatterService } from '../../services/BracketFormatterService.ts';
 import { detectType, suggestModeFromDetection } from './detect.ts';
+import { formatPhpVarDump } from './phpVarDump.ts';
 
 export { detectType, suggestModeFromDetection };
 
@@ -10,14 +11,25 @@ export function beautify(text: string, options: BeautifyOptions): BeautifyResult
   try {
     const indentStr = options.useTabs ? '\t' : ' '.repeat(options.indent);
     
+    // Detect type for potential post-processing
+    const detected = detectType(text);
+    
     // Check for unbalanced brackets before formatting
     const diagnostics = analyzeBracketBalance(text);
     
-    // Use BracketFormatterService for all formatting
-    let output = BracketFormatterService.format(text, indentStr);
+    // Use specialized formatters or fall back to BracketFormatterService
+    let output: string;
+    if (detected === 'phpVarDump') {
+      output = formatPhpVarDump(text, indentStr);
+    } else {
+      output = BracketFormatterService.format(text, indentStr);
+    }
 
     // Insert newline between adjacent top-level structures like '}{' → '}\n{'
-    output = insertNewlineBetweenTopLevel(output);
+    // Skip this for PHP var_dump as it corrupts the format
+    if (detected !== 'phpVarDump') {
+      output = insertNewlineBetweenTopLevel(output);
+    }
 
     // Ensure a trailing newline for consistency with previous formatter behavior
     if (output && !output.endsWith('\n')) {

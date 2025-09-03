@@ -37,13 +37,17 @@ function renderProgress(processed: number, total: number) {
 
 function renderResult(result: BeautifyResult) {
   const out = $('output');
-  const diag = $('diagnostics');
+  const copyBtn = $('copyBtn');
+  
   out.textContent = result.output;
-  const warnings = result.diagnostics?.warnings?.length ? result.diagnostics.warnings.join('\n') : 'none';
-  const unbalanced = result.diagnostics?.unbalancedBrackets ? 'true' : 'false';
-  diag.textContent = `timeMs: ${Math.round(result.timeMs)}\n` +
-    `unbalancedBrackets: ${unbalanced}\n` +
-    `warnings:\n${warnings}`;
+  
+  // Show copy button if there's output
+  if (result.output.trim()) {
+    copyBtn.style.display = 'flex';
+  } else {
+    copyBtn.style.display = 'none';
+  }
+  
   renderProgress(0, 1); // reset
 }
 
@@ -68,12 +72,65 @@ async function handleFormatClick() {
   }
 }
 
+async function copyToClipboard(text: string) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+  } else {
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  }
+}
+
+async function handleCopyClick() {
+  const output = $('output');
+  const copyBtn = $('copyBtn');
+  const text = output.textContent || '';
+  
+  if (!text.trim()) return;
+  
+  try {
+    await copyToClipboard(text);
+    
+    // Show success feedback
+    const originalHTML = copyBtn.innerHTML;
+    copyBtn.innerHTML = `
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      Copied!
+    `;
+    copyBtn.classList.add('bg-green-100', 'text-green-700');
+    copyBtn.classList.remove('bg-slate-100', 'text-slate-700');
+    
+    setTimeout(() => {
+      copyBtn.innerHTML = originalHTML;
+      copyBtn.classList.remove('bg-green-100', 'text-green-700');
+      copyBtn.classList.add('bg-slate-100', 'text-slate-700');
+    }, 1500);
+    
+  } catch (err) {
+    console.error('Copy failed:', err);
+  }
+}
+
 function initBeautifyUI() {
   beautifyWorkerService.prewarm();
+  
   const btn = $('formatBtn');
   btn.addEventListener('click', (e) => {
     e.preventDefault();
     handleFormatClick();
+  });
+  
+  const copyBtn = $('copyBtn');
+  copyBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    handleCopyClick();
   });
   
   // Auto-select all text when textarea is focused (for easy deletion)
