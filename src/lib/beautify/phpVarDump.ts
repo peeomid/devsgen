@@ -36,7 +36,7 @@ export function formatPhpVarDump(text: string, indentStr: string): string {
   
   // 5. Fix line breaks and indentation
   const lines = result.split('\n');
-  const formattedLines = [];
+  const formattedLines: string[] = [];
   let depth = 0;
   
   for (let i = 0; i < lines.length; i++) {
@@ -60,10 +60,28 @@ export function formatPhpVarDump(text: string, indentStr: string): string {
       continue;
     }
     
+    // Join lines where a key ends with => and the value starts on next line
+    if (/\]\s*=>\s*$/.test(line) && i + 1 < lines.length) {
+      const next = lines[i + 1].trim();
+      if (/^(int\(|string\(|float\(|bool\(|object\(|array\(\d+\)|resource\()/.test(next)) {
+        line = `${line} ${next}`;
+        i++; // consume next line
+        // If array(n) or object(...) is followed by '{' on the next line, attach it
+        const opensBlock = /array\(\d+\)\s*$/.test(line) || /object\([^)]*\)\s*#?\d*\s*\(\d+\)\s*$/.test(line);
+        if (opensBlock && i + 1 < lines.length && lines[i + 1].trim() === '{') {
+          line += ' {';
+          i++; // consume '{'
+          formattedLines.push(indentStr.repeat(depth) + line);
+          depth++;
+          continue;
+        }
+      }
+    }
+
     // Handle regular lines
     formattedLines.push(indentStr.repeat(depth) + line);
-    
-    // Track depth changes
+
+    // Track depth changes after pushing
     const openBraces = (line.match(/\{/g) || []).length;
     const closeBraces = (line.match(/\}/g) || []).length;
     depth += openBraces - closeBraces;

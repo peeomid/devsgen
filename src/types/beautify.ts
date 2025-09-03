@@ -44,6 +44,11 @@ export type Detected =
   | 'pythonRepr'
   | 'phpArray'
   | 'phpVarDump'
+  | 'css'
+  | 'sql'
+  | 'html'
+  | 'xml'
+  | 'yaml'
   | 'unknown';
 
 export interface WorkerRequest {

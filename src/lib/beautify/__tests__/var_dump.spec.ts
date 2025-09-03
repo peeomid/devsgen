@@ -84,5 +84,67 @@ describe('phpish var_dump formatting (exact case)', () => {
 
     expect(result.output).toBe(expected);
   });
-});
 
+  it('joins object headers and opens block inline', () => {
+    const input = [
+      'array(1){',
+      '  ["obj"]=>',
+      '  object(stdClass)#1 (2)',
+      '  {',
+      '    ["a"]=>',
+      '    int(1)',
+      '    ["b"]=>',
+      '    string(1) "x"',
+      '  }',
+      '}',
+    ].join('\n');
+
+    const result = beautify(input, {
+      mode: 'phpish',
+      indent: 2,
+      useTabs: false,
+      newlineAfterComma: true,
+      keepComments: true,
+      conservative: false,
+    });
+
+    const expected = [
+      'array(1) {',
+      '  ["obj"] => object(stdClass)#1 (2) {',
+      '    ["a"] => int(1)',
+      '    ["b"] => string(1) "x"',
+      '  }',
+      '}',
+      '',
+    ].join('\n');
+
+    expect(result.output).toBe(expected);
+  });
+
+  it('joins resource line inline without block', () => {
+    const input = [
+      'array(1){',
+      '  ["h"]=>',
+      '  resource(5) of type (stream)',
+      '}',
+    ].join('\n');
+
+    const result = beautify(input, {
+      mode: 'phpish',
+      indent: 2,
+      useTabs: false,
+      newlineAfterComma: true,
+      keepComments: true,
+      conservative: false,
+    });
+
+    const expected = [
+      'array(1) {',
+      '  ["h"] => resource(5) of type (stream)',
+      '}',
+      '',
+    ].join('\n');
+
+    expect(result.output).toBe(expected);
+  });
+});

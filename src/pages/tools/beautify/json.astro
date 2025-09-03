@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BeautifierUI from '../../../components/beautify/BeautifierUI.astro';
+
+const title = 'JSON Formatter | Pretty Print JSON (No Validation)';
+const description = 'Format broken JSON that other tools reject, even massive files. Handles missing quotes, trailing commas, and malformed syntax without browser freezing. No validation errors - just formatting.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto">
+    <nav class="flex mb-4 text-sm text-gray-500" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2">
+        <a href="/" class="hover:text-primary">Home</a>
+        <span>›</span>
+        <a href="/tools" class="hover:text-primary">Tools</a>
+        <span>›</span>
+        <a href="/tools/beautify" class="hover:text-primary">Code Beautifier</a>
+        <span>›</span>
+        <span class="text-gray-900">JSON Formatter (No Validation)</span>
+      </div>
+    </nav>
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">JSON Formatter (Does Not Validate)</h1>
+      <p class="mt-2 text-gray-600">Paste any JSON-like code, even huge files - broken syntax, missing quotes, trailing commas welcome. We'll format what other tools reject without freezing your browser and auto-detect Python, JavaScript, and more.</p>
+    </header>
+  </div>
+
+  <BeautifierUI sample={`{foo: 'bar', items: [1,2,], trailing: true,}`}/>
+
+  <div class="max-w-7xl mx-auto">
+    <section class="mb-12 mt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Related Formats</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/tools/beautify/python" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">Python Formatter</h3>
+          <p class="text-sm text-gray-500 mt-1">PEP 8-friendly output</p>
+        </a>
+        <a href="/tools/beautify/javascript" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">JavaScript Beautifier</h3>
+          <p class="text-sm text-gray-500 mt-1">Fix spacing and semicolons</p>
+        </a>
+        <a href="/tools/beautify/sql" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">SQL Query Formatter</h3>
+          <p class="text-sm text-gray-500 mt-1">Readable queries for reviews</p>
+        </a>
+      </div>
+      <p class="text-sm text-gray-500 mt-4">See also: <a href="/tools/beautify" class="text-primary hover:text-blue-700">Code Beautifier hub</a> • <a href="/tools" class="text-primary hover:text-blue-700">All tools</a></p>
+    </section>
+  </div>
+</BaseLayout>

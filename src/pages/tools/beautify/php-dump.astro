@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BeautifierUI from '../../../components/beautify/BeautifierUI.astro';
+
+const title = 'PHP Dump Formatter | Beautify var_dump and print_r Output';
+const description = 'Make messy PHP var_dump output readable, even massive debug dumps. Align keys, indent nested arrays, and preserve types without browser lag. Perfect for debugging complex data structures.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto">
+    <nav class="flex mb-4 text-sm text-gray-500" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2">
+        <a href="/" class="hover:text-primary">Home</a>
+        <span>›</span>
+        <a href="/tools" class="hover:text-primary">Tools</a>
+        <span>›</span>
+        <a href="/tools/beautify" class="hover:text-primary">Code Beautifier</a>
+        <span>›</span>
+        <span class="text-gray-900">PHP Dump Beautifier</span>
+      </div>
+    </nav>
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">PHP Dump Beautifier</h1>
+      <p class="mt-2 text-gray-600">Paste PHP var_dump, print_r, or any messy code - we'll auto-detect and format it beautifully. Also handles JSON, Python, and JavaScript structures.</p>
+    </header>
+  </div>
+
+  <BeautifierUI sample={`array(2) {\n  [\"user\"]=>\n  array(3) {\n    [\"id\"]=>\n    int(42)\n    [\"name\"]=>\n    string(5) \"Alice\"\n    [\"roles\"]=>\n    array(2) {\n      [0]=>\n      string(5) \"admin\"\n      [1]=>\n      string(4) \"user\"\n    }\n  }\n  [\"active\"]=>\n  bool(true)\n}`}/>
+
+  <div class="max-w-7xl mx-auto">
+    <section class="mb-12 mt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Related Formats</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/tools/beautify/json" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">JSON Formatter (No Validation)</h3>
+          <p class="text-sm text-gray-500 mt-1">Inspect payloads even when imperfect</p>
+        </a>
+        <a href="/tools/beautify/yaml" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">YAML Beautifier</h3>
+          <p class="text-sm text-gray-500 mt-1">Consistent indentation for configs</p>
+        </a>
+        <a href="/tools/beautify/python" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">Python Formatter</h3>
+          <p class="text-sm text-gray-500 mt-1">Readable repr-like structures</p>
+        </a>
+      </div>
+      <p class="text-sm text-gray-500 mt-4">See also: <a href="/tools/beautify" class="text-primary hover:text-blue-700">Code Beautifier hub</a> • <a href="/tools" class="text-primary hover:text-blue-700">All tools</a></p>
+    </section>
+  </div>
+</BaseLayout>
+

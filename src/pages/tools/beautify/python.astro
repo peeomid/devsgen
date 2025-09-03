@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BeautifierUI from '../../../components/beautify/BeautifierUI.astro';
+
+const title = 'Python Formatter | PEP 8-Compliant Code Beautifier';
+const description = 'PEP 8-compliant Python formatter for any size codebase. Auto-fix indentation, line length, imports, and quotes without browser freezing. Paste code or batch format files.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto">
+    <nav class="flex mb-4 text-sm text-gray-500" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2">
+        <a href="/" class="hover:text-primary">Home</a>
+        <span>›</span>
+        <a href="/tools" class="hover:text-primary">Tools</a>
+        <span>›</span>
+        <a href="/tools/beautify" class="hover:text-primary">Code Beautifier</a>
+        <span>›</span>
+        <span class="text-gray-900">Python Formatter</span>
+      </div>
+    </nav>
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Python Code Formatter</h1>
+      <p class="mt-2 text-gray-600">PEP 8-friendly indentation and spacing. Safe defaults similar to black/autopep8.</p>
+    </header>
+  </div>
+
+  <BeautifierUI sample={`def add(a,b):\n return a+b\n\nclass T: pass`}/>
+
+  <div class="max-w-7xl mx-auto">
+    <section class="mb-12 mt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Related Formats</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/tools/beautify/json" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">JSON Formatter (No Validation)</h3>
+          <p class="text-sm text-gray-500 mt-1">Great for inspecting data structures</p>
+        </a>
+        <a href="/tools/beautify/minified" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">Beautify Minified Code</h3>
+          <p class="text-sm text-gray-500 mt-1">Make compact code readable</p>
+        </a>
+        <a href="/tools/beautify/sql" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">SQL Query Formatter</h3>
+          <p class="text-sm text-gray-500 mt-1">Readable queries for reviews</p>
+        </a>
+      </div>
+      <p class="text-sm text-gray-500 mt-4">See also: <a href="/tools/beautify" class="text-primary hover:text-blue-700">Code Beautifier hub</a> • <a href="/tools" class="text-primary hover:text-blue-700">All tools</a></p>
+    </section>
+  </div>
+</BaseLayout>
+

@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BeautifierUI from '../../../components/beautify/BeautifierUI.astro';
+
+const title = 'CSS Formatter | Beautify or Minify CSS';
+const description = 'Format or minify CSS in one click, even huge stylesheets. Fix indentation, brace style, and ordering without browser lag. Optionally compress for production.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-7xl mx-auto">
+    <nav class="flex mb-4 text-sm text-gray-500" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2">
+        <a href="/" class="hover:text-primary">Home</a>
+        <span>›</span>
+        <a href="/tools" class="hover:text-primary">Tools</a>
+        <span>›</span>
+        <a href="/tools/beautify" class="hover:text-primary">Code Beautifier</a>
+        <span>›</span>
+        <span class="text-gray-900">CSS Beautifier & Minifier</span>
+      </div>
+    </nav>
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">CSS Beautifier & Minifier</h1>
+      <p class="mt-2 text-gray-600">Readable dev formatting or compressed production output.</p>
+    </header>
+  </div>
+
+  <BeautifierUI sample={`body{margin:0;padding:0}h1{font-size:2rem;color:#333}`}/>
+
+  <div class="max-w-7xl mx-auto">
+    <section class="mb-12 mt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Related Formats</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="/tools/beautify/html" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">HTML Beautifier</h3>
+          <p class="text-sm text-gray-500 mt-1">Pretty print markup</p>
+        </a>
+        <a href="/tools/beautify/javascript" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">JavaScript Beautifier</h3>
+          <p class="text-sm text-gray-500 mt-1">Fix spacing and semicolons</p>
+        </a>
+        <a href="/tools/beautify/minified" class="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all">
+          <h3 class="font-medium text-gray-900">Beautify Minified Code</h3>
+          <p class="text-sm text-gray-500 mt-1">Readable from minified assets</p>
+        </a>
+      </div>
+      <p class="text-sm text-gray-500 mt-4">See also: <a href="/tools/beautify" class="text-primary hover:text-blue-700">Code Beautifier hub</a> • <a href="/tools" class="text-primary hover:text-blue-700">All tools</a></p>
+    </section>
+  </div>
+</BaseLayout>
+

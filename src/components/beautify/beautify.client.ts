@@ -1,6 +1,6 @@
-import { beautifyWorkerService } from '../../../services/BeautifyWorkerService.ts';
-import { detectType, suggestModeFromDetection } from '../../../lib/beautify/beautify.ts';
-import type { BeautifyOptions, BeautifyResult } from '../../../types/beautify.ts';
+import { beautifyWorkerService } from '../../services/BeautifyWorkerService.ts';
+import { detectType, suggestModeFromDetection } from '../../lib/beautify/beautify.ts';
+import type { BeautifyOptions, BeautifyResult } from '../../types/beautify.ts';
 
 function $(id: string): HTMLElement {
   const el = document.getElementById(id);
@@ -41,14 +41,13 @@ function renderResult(result: BeautifyResult) {
   
   out.textContent = result.output;
   
-  // Show copy button if there's output
   if (result.output.trim()) {
     copyBtn.style.display = 'flex';
   } else {
     copyBtn.style.display = 'none';
   }
   
-  renderProgress(0, 1); // reset
+  renderProgress(0, 1);
 }
 
 function setDetectedBadge(detected: string) {
@@ -76,7 +75,6 @@ async function copyToClipboard(text: string) {
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(text);
   } else {
-    // Fallback for older browsers
     const textArea = document.createElement('textarea');
     textArea.value = text;
     document.body.appendChild(textArea);
@@ -90,13 +88,9 @@ async function handleCopyClick() {
   const output = $('output');
   const copyBtn = $('copyBtn');
   const text = output.textContent || '';
-  
   if (!text.trim()) return;
-  
   try {
     await copyToClipboard(text);
-    
-    // Show success feedback
     const originalHTML = copyBtn.innerHTML;
     copyBtn.innerHTML = `
       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,13 +100,11 @@ async function handleCopyClick() {
     `;
     copyBtn.classList.add('bg-green-100', 'text-green-700');
     copyBtn.classList.remove('bg-slate-100', 'text-slate-700');
-    
     setTimeout(() => {
       copyBtn.innerHTML = originalHTML;
       copyBtn.classList.remove('bg-green-100', 'text-green-700');
       copyBtn.classList.add('bg-slate-100', 'text-slate-700');
     }, 1500);
-    
   } catch (err) {
     console.error('Copy failed:', err);
   }
@@ -120,26 +112,20 @@ async function handleCopyClick() {
 
 function initBeautifyUI() {
   beautifyWorkerService.prewarm();
-  
   const btn = $('formatBtn');
   btn.addEventListener('click', (e) => {
     e.preventDefault();
     handleFormatClick();
   });
-  
   const copyBtn = $('copyBtn');
   copyBtn.addEventListener('click', (e) => {
     e.preventDefault();
     handleCopyClick();
   });
-  
-  // Auto-select all text when textarea is focused (for easy deletion)
   const input = $('input') as HTMLTextAreaElement;
   input.addEventListener('focus', () => {
     input.select();
   });
-  
-  // Sample text is now server-rendered in the HTML
 }
 
 if (document.readyState === 'loading') {

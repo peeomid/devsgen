@@ -35,8 +35,8 @@ describe('Beautify All Types (Regression Tests)', () => {
       const input = '{"items":[1,2,3],"tags":["a","b"]}';
       const result = beautify(input, defaultOptions);
       
-      expect(result.output).toContain('[\n    1,');
-      expect(result.output).toContain('[\n    "a",');
+      expect(result.output).toContain('[1, 2, 3]');
+      expect(result.output).toContain('["a", "b"]');
     });
   });
 

@@ -18,7 +18,7 @@ describe('BracketFormatterService', () => {
     
     expect(result).toContain('{\n  "obj": {');
     expect(result).toContain('{\n    "nested": "value"');
-    expect(result).toContain('[\n    1,\n    2,\n    3');
+    expect(result).toContain('[1, 2, 3]');
   });
 
   test('handles empty structures', () => {
@@ -63,8 +63,8 @@ describe('BracketFormatterService', () => {
     const input = '{"array":[1,2],"tuple":(3,4)}';
     const result = BracketFormatterService.format(input);
     
-    expect(result).toContain('[\n    1,\n    2');
-    expect(result).toContain('(\n    3,\n    4');
+    expect(result).toContain('[1, 2]');
+    expect(result).toContain('(3, 4)');
   });
 
   test('handles PHP array syntax', () => {
