@@ -24,7 +24,8 @@ describe('phpish var_dump formatting (exact case)', () => {
     const expected = [
       'array(2) {',
       '  ["id"] => int(42)',
-      '  ["tags"] => array(3) {',
+      '  ["tags"] =>',
+      '  array(3) {',
       '    [0] => string(3) "one"',
       '    [1] => string(3) "two"',
       '    [2] => string(5) "three"',
@@ -74,7 +75,8 @@ describe('phpish var_dump formatting (exact case)', () => {
 
     const expected = [
       'array(1) {',
-      '  ["nested"] => array(2) {',
+      '  ["nested"] =>',
+      '  array(2) {',
       '    ["a"] => int(1)',
       '    ["b"] => string(4) "test"',
       '  }',
@@ -110,7 +112,8 @@ describe('phpish var_dump formatting (exact case)', () => {
 
     const expected = [
       'array(1) {',
-      '  ["obj"] => object(stdClass)#1 (2) {',
+      '  ["obj"] =>',
+      '  object(stdClass)#1 (2) {',
       '    ["a"] => int(1)',
       '    ["b"] => string(1) "x"',
       '  }',

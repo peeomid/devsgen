@@ -3,6 +3,23 @@
  * Handles formatting of code structures using bracket-based indentation
  * while respecting strings and escape sequences
  */
+
+type BracketType = '{' | '[' | '(';
+
+interface BracketContext {
+  type: BracketType;
+  multiline: boolean;
+}
+
+interface BracketContentAnalysis {
+  hasNested: boolean;
+  hasAssignment: boolean;
+  contentLength: number;
+  commaCount: number;
+  hasNewline: boolean;
+  firstToken: string;
+}
+
 export class BracketFormatterService {
   /**
    * Format code using bracket-based pretty printing
@@ -19,6 +36,7 @@ export class BracketFormatterService {
 
     const openers = new Set(["{", "[", "("]);
     const closers = new Set(["}", "]", ")"]);
+    const contextStack: BracketContext[] = [];
 
     const pushIndent = () => {
       out += "\n" + indentStr.repeat(depth);
@@ -67,86 +85,83 @@ export class BracketFormatterService {
       if (openers.has(ch)) {
         // Add space before { if this is a function body
         if (ch === '{') {
-          let recentOutput = out.substring(Math.max(0, out.length - 30));
+          const recentOutput = out.substring(Math.max(0, out.length - 30));
           if (recentOutput.includes('function ') && recentOutput.endsWith(')')) {
             out += ' ';
           }
         }
-        
+
+        const previousOutput = out;
+        const parentContext = contextStack.length > 0 ? contextStack[contextStack.length - 1] : undefined;
+
         out += ch;
         depth++;
-        
+
         // Look ahead to see if this is an empty structure
         let j = i + 1;
         while (j < input.length && /\s/.test(input[j])) j++;
-        if (j < input.length && closers.has(input[j])) {
-          // Empty structure - don't add newline
-        } else {
-          // Smart indentation logic
-          let shouldIndent = true;
-          
-          // Special handling for PHP var_dump: don't break up type declarations like int(42), string(3), array(3)
-          if (ch === "(") {
-            let lookBack = out.trim();
-            if (/\b(int|string|float|bool|array|object|resource|NULL)\s*$/.test(lookBack)) {
-              shouldIndent = false; // PHP type declaration
-            } else {
-              // All other parentheses (function calls/parameters) - keep inline
-              shouldIndent = false;
+        const isEmptyStructure = j < input.length && closers.has(input[j]);
+
+        let context: BracketContext = {
+          type: ch as BracketType,
+          multiline: false,
+        };
+
+        if (!isEmptyStructure) {
+          if (ch === '(') {
+            const lookBack = previousOutput.trimEnd();
+            const isPhpType = /\b(int|string|float|bool|array|object|resource|NULL)\s*$/.test(lookBack);
+            if (!isPhpType) {
+              const analysis = this.analyzeBracketContent(input, i, '(');
+              if (analysis) {
+                const isFunctionLike = this.isFunctionLikeCall(previousOutput);
+                context.multiline = this.shouldIndentParentheses(analysis, parentContext, isFunctionLike);
+              }
             }
-          }
-          
-          // For arrays, keep inline if they're simple
-          if (ch === "[") {
-            // Simple heuristic: if the content looks short and simple, keep inline
-            shouldIndent = this.shouldIndentArray(input, i);
-          }
-          
-          // For objects, usually indent unless very simple or function body
-          if (ch === "{") {
-            // Check if this is a function body (preceded by closing parenthesis)
-            let recentOutput = out.substring(Math.max(0, out.length - 50));
-            if (recentOutput.includes('function ') && (recentOutput.endsWith(')') || recentOutput.endsWith(') '))) {
-              shouldIndent = false; // Keep function body brace inline
-            } else {
-              shouldIndent = true;
+          } else if (ch === '[') {
+            const analysis = this.analyzeBracketContent(input, i, '[');
+            if (analysis) {
+              context.multiline = this.shouldIndentArray(analysis, parentContext);
             }
+          } else if (ch === '{') {
+            context.multiline = true;
           }
-          
-          if (shouldIndent) {
-            pushIndent();
-          }
+        }
+
+        contextStack.push(context);
+
+        if (context.multiline) {
+          pushIndent();
         }
         continue;
       }
 
       if (closers.has(ch)) {
+        const context = contextStack.pop();
         depth = Math.max(0, depth - 1);
-        
+
         // Check if this is closing a PHP type declaration like int(42)
         let isClosingPhpType = false;
-        if (ch === ")") {
-          // Look for pattern like int(digits) or string(digits)
-          let lookBack = out.substring(Math.max(0, out.length - 50)); // Check last 50 chars
+        if (ch === ')') {
+          const lookBack = out.substring(Math.max(0, out.length - 50));
           if (/\b(int|string|float|bool|array|object|resource|NULL)\s*\([^)]*$/.test(lookBack)) {
             isClosingPhpType = true;
           }
         }
-        
+
         // Check if this is closing an empty structure
-        let lastNonWhitespace = "";
+        let lastNonWhitespace = '';
         for (let k = out.length - 1; k >= 0; k--) {
           if (!/\s/.test(out[k])) {
             lastNonWhitespace = out[k];
             break;
           }
         }
-        
-        // Smart closing bracket handling - add newlines for proper indentation
-        const shouldIndentCloser = this.shouldIndentClosingBracket(out, ch, lastNonWhitespace, isClosingPhpType);
-        
+
+        const shouldIndentCloser = this.shouldIndentClosingBracket(out, ch, lastNonWhitespace, isClosingPhpType, context);
+
         if (shouldIndentCloser) {
-          out += "\n" + indentStr.repeat(depth);
+          out += '\n' + indentStr.repeat(depth);
         }
         out += ch;
         continue;
@@ -167,7 +182,8 @@ export class BracketFormatterService {
         
         // Smart comma handling: don't break lines for function parameters
         // but do break for object/array items
-        const shouldBreakLine = this.shouldBreakAfterComma(input, i, depth);
+        const currentContext = contextStack.length > 0 ? contextStack[contextStack.length - 1] : undefined;
+        const shouldBreakLine = this.shouldBreakAfterComma(currentContext);
         
         if (shouldBreakLine) {
           pushIndent();
@@ -215,15 +231,61 @@ export class BracketFormatterService {
 
       if (ch === ":" || (ch === "=" && i + 1 < input.length && input[i + 1] === ">")) {
         if (ch === "=" && input[i + 1] === ">") {
-          // For =>, only add space before if there isn't already one (preserve original spacing)
           const lastChar = out[out.length - 1];
           if (lastChar && lastChar !== " " && lastChar !== "\n") {
             out += " ";
           }
+
+          let lastNonWhitespaceChar = '';
+          for (let k = out.length - 1; k >= 0; k--) {
+            const candidate = out[k];
+            if (!/\s/.test(candidate)) {
+              lastNonWhitespaceChar = candidate;
+              break;
+            }
+          }
+
+          let lookaheadIndex = i + 2;
+          while (lookaheadIndex < input.length && /\s/.test(input[lookaheadIndex])) {
+            lookaheadIndex++;
+          }
+          const upcomingWord = input.substring(lookaheadIndex, lookaheadIndex + 5).toLowerCase();
+
+          let hasBraceAfterArray = false;
+          if (upcomingWord.startsWith('array')) {
+            let closeParenIndex = lookaheadIndex;
+            while (closeParenIndex < input.length && input[closeParenIndex] !== ')') {
+              closeParenIndex++;
+            }
+            if (closeParenIndex < input.length) {
+              let afterParen = closeParenIndex + 1;
+              while (afterParen < input.length && /\s/.test(input[afterParen])) {
+                afterParen++;
+              }
+              if (afterParen < input.length && input[afterParen] === '{') {
+                hasBraceAfterArray = true;
+              }
+            }
+          }
+
+          const currentContext = contextStack.length > 0 ? contextStack[contextStack.length - 1] : undefined;
+          const shouldBreakAfterArrow = lastNonWhitespaceChar === ']' || (currentContext?.type === '{' && hasBraceAfterArray);
+
           out += "=>";
-          // Always ensure space after =>
-          out += " ";
           i++; // Skip the '>'
+
+          if (shouldBreakAfterArrow) {
+            out += "\n" + indentStr.repeat(Math.max(0, depth + 1));
+
+            // Skip immediate whitespace/newlines we've replaced
+            let skipIndex = i + 1;
+            while (skipIndex < input.length && (input[skipIndex] === '\n' || input[skipIndex] === ' ' || input[skipIndex] === '\t')) {
+              skipIndex++;
+            }
+            i = skipIndex - 1;
+          } else {
+            out += " ";
+          }
         } else {
           out += ": ";
         }
@@ -301,62 +363,48 @@ export class BracketFormatterService {
    * @param currentDepth - Current nesting depth
    * @returns true if should break line, false for inline spacing
    */
-  private static shouldBreakAfterComma(input: string, commaIndex: number, currentDepth: number): boolean {
-    // Find the most recent opening bracket to determine context
-    let recentOpener = '';
-    let depth = 0;
-    let inString = false;
-    let stringChar = '';
-    
-    for (let i = commaIndex - 1; i >= 0; i--) {
-      const ch = input[i];
-      
-      // Handle string boundaries
-      if (!inString && (ch === '"' || ch === "'")) {
-        inString = true;
-        stringChar = ch;
-        continue;
-      }
-      if (inString && ch === stringChar && input[i-1] !== '\\') {
-        inString = false;
-        stringChar = '';
-        continue;
-      }
-      if (inString) continue;
-      
-      if (ch === ')' || ch === ']' || ch === '}') {
-        depth++;
-      } else if (ch === '(' || ch === '[' || ch === '{') {
-        if (depth === 0) {
-          recentOpener = ch;
-          break;
-        }
-        depth--;
-      }
-    }
-    
-    // Decision logic:
-    // - In parentheses (): likely function parameters - keep inline for short lists
-    // - In square brackets []: arrays - break for readability if nested
-    // - In curly braces {}: objects - usually break
-    
-    if (recentOpener === '(') {
-      // Parentheses (function calls/parameters) - keep inline by default
+  private static shouldBreakAfterComma(context?: BracketContext): boolean {
+    if (!context) {
       return false;
     }
-    
-    if (recentOpener === '[') {
-      // Arrays - keep inline for simple cases
-      return false;
-    }
-    
-    if (recentOpener === '{') {
-      // Objects - always break for readability
+
+    if (context.type === '{') {
       return true;
     }
-    
-    // Default: break the line
-    return true;
+
+    return context.multiline;
+  }
+
+  private static shouldIndentParentheses(analysis: BracketContentAnalysis, parentContext?: BracketContext, isFunctionLike = false): boolean {
+    if (analysis.hasAssignment || analysis.hasNewline) {
+      return true;
+    }
+
+    if (!isFunctionLike && analysis.hasNested && analysis.firstToken !== 'function') {
+      return true;
+    }
+
+    if (analysis.hasNested && analysis.contentLength > 80 && analysis.firstToken !== 'function') {
+      return true;
+    }
+
+    if (!isFunctionLike && analysis.firstToken === 'function') {
+      return false;
+    }
+
+    if (!isFunctionLike && parentContext?.multiline && analysis.commaCount > 0 && (analysis.hasNested || analysis.contentLength > 12)) {
+      return true;
+    }
+
+    if (analysis.commaCount >= 2 && analysis.contentLength > 60) {
+      return true;
+    }
+
+    if (analysis.contentLength > 120) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -365,54 +413,156 @@ export class BracketFormatterService {
    * @param arrayStart - The index of the opening bracket
    * @returns true if should indent, false for inline
    */
-  private static shouldIndentArray(input: string, arrayStart: number): boolean {
-    // Find the closing bracket and analyze content
-    let depth = 0;
+  private static shouldIndentArray(analysis: BracketContentAnalysis, parentContext?: BracketContext): boolean {
+    if (analysis.hasNested || analysis.hasAssignment || analysis.hasNewline) {
+      return true;
+    }
+
+    if (analysis.contentLength > 100 || analysis.commaCount >= 6) {
+      return true;
+    }
+
+    if (parentContext?.multiline && (analysis.hasNested || analysis.contentLength > 60 || analysis.commaCount >= 4)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private static analyzeBracketContent(input: string, startIndex: number, opener: BracketType): BracketContentAnalysis | null {
+    const matching = opener === '(' ? ')' : opener === '[' ? ']' : '}';
+    const openerSet = new Set(['(', '[', '{']);
+    const closerSet = new Set([')', ']', '}']);
+
+    const stack: string[] = [];
     let inString = false;
     let stringChar = '';
+    let escape = false;
+    let hasNested = false;
+    let hasAssignment = false;
     let contentLength = 0;
-    let hasNestedStructures = false;
-    
-    for (let i = arrayStart + 1; i < input.length; i++) {
+    let commaCount = 0;
+    let hasNewline = false;
+    let firstToken = '';
+    let capturedToken = false;
+
+    for (let i = startIndex + 1; i < input.length; i++) {
       const ch = input[i];
-      
-      // Handle strings
-      if (!inString && (ch === '"' || ch === "'")) {
+
+      if (escape) {
+        escape = false;
+        contentLength++;
+        continue;
+      }
+
+      if (ch === '\\') {
+        escape = true;
+        contentLength++;
+        continue;
+      }
+
+      if (inString) {
+        if (ch === stringChar) {
+          inString = false;
+        }
+        contentLength++;
+        continue;
+      }
+
+      if (ch === '"' || ch === "'") {
         inString = true;
         stringChar = ch;
         contentLength++;
-        continue;
-      }
-      if (inString && ch === stringChar && input[i-1] !== '\\') {
-        inString = false;
-        stringChar = '';
-        contentLength++;
-        continue;
-      }
-      if (inString) {
-        contentLength++;
-        continue;
-      }
-      
-      // Handle brackets
-      if (ch === '[' || ch === '(' || ch === '{') {
-        depth++;
-        hasNestedStructures = true;
-        contentLength++;
-      } else if (ch === ']' || ch === ')' || ch === '}') {
-        if (depth === 0 && ch === ']') {
-          break; // Found closing bracket
+        if (!capturedToken) {
+          capturedToken = true;
+          firstToken = ch;
         }
-        depth--;
+        continue;
+      }
+
+      if (ch === '\n') {
+        hasNewline = true;
+        continue;
+      }
+
+      if (ch === ',') {
+        commaCount++;
+        continue;
+      }
+
+      if (!/\s/.test(ch)) {
         contentLength++;
-      } else if (ch !== ' ' && ch !== '\t' && ch !== '\n') {
-        contentLength++;
+        if (!capturedToken) {
+          capturedToken = true;
+          let endIndex = i;
+          while (endIndex < input.length && /[a-zA-Z0-9_]/.test(input[endIndex])) {
+            endIndex++;
+          }
+          firstToken = input.substring(i, endIndex).toLowerCase();
+        }
+      }
+
+      if (ch === '=' ) {
+        if (i + 1 < input.length && input[i + 1] === '>') {
+          hasAssignment = true;
+        } else {
+          hasAssignment = true;
+        }
+        continue;
+      }
+
+      if (openerSet.has(ch)) {
+        stack.push(ch);
+        if (stack.length === 1) {
+          hasNested = true;
+        }
+        continue;
+      }
+
+      if (closerSet.has(ch)) {
+        if (stack.length === 0) {
+          if (ch === matching) {
+            return {
+              hasNested,
+              hasAssignment,
+              contentLength,
+              commaCount,
+              hasNewline,
+              firstToken,
+            };
+          }
+          return {
+            hasNested,
+            hasAssignment,
+            contentLength,
+            commaCount,
+            hasNewline,
+            firstToken,
+          };
+        }
+
+        const expectedOpener = stack[stack.length - 1];
+        const expectedCloser = expectedOpener === '(' ? ')' : expectedOpener === '[' ? ']' : '}';
+        if (ch === expectedCloser) {
+          stack.pop();
+        } else {
+          stack.pop();
+        }
+        continue;
       }
     }
-    
-    // Keep simple arrays inline - only break for very complex or very long arrays
-    // This preserves the JavaScript formatting behavior while handling complex cases
-    return hasNestedStructures && contentLength > 30;
+
+    return null;
+  }
+
+  private static isFunctionLikeCall(previousOutput: string): boolean {
+    const trimmed = previousOutput.trimEnd();
+    if (!trimmed) {
+      return false;
+    }
+
+    const lastChar = trimmed[trimmed.length - 1];
+    return /[a-zA-Z0-9_.\)]/.test(lastChar);
   }
 
   /**
@@ -459,12 +609,16 @@ export class BracketFormatterService {
    * @param isClosingPhpType - Whether this is closing a PHP type declaration
    * @returns true if should add newline before closing bracket
    */
-  private static shouldIndentClosingBracket(output: string, closingBracket: string, lastNonWhitespace: string, isClosingPhpType: boolean): boolean {
+  private static shouldIndentClosingBracket(output: string, closingBracket: string, lastNonWhitespace: string, isClosingPhpType: boolean, context?: BracketContext): boolean {
     // Never indent PHP type closures
     if (isClosingPhpType) return false;
     
     // Never indent if we just opened the structure (empty structure)
     if (lastNonWhitespace === '{' || lastNonWhitespace === '[' || lastNonWhitespace === '(') return false;
+
+    if (context?.multiline) {
+      return true;
+    }
     
     // For parentheses, check if this looks like an inline function call/parameter list
     if (closingBracket === ')') {

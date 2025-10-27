@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { FileData, Line, CSVLine, DatabaseSchema } from '../types/database';
+import type { FileData, Line, CSVLine } from '../types/database';
 
 interface OriginalLines {
   id: number;
@@ -7,7 +7,132 @@ interface OriginalLines {
   lines: string[];
 }
 
-class LineFilterDatabase extends Dexie {
+type QueryResult<T> = {
+  offset(value: number): QueryResult<T>;
+  limit(value: number): QueryResult<T>;
+  toArray(): Promise<T[]>;
+};
+
+type WhereResult<T> = {
+  anyOf(values: Array<T[keyof T]>): { toArray(): Promise<T[]> };
+};
+
+interface TableLike<T> {
+  clear(): Promise<void>;
+  bulkAdd(items: Array<Omit<T, 'id'>>): Promise<void>;
+  put(item: T): Promise<void>;
+  get(key: any): Promise<T | undefined>;
+  orderBy(field: keyof T): QueryResult<T>;
+  where(field: keyof T): WhereResult<T>;
+  count(): Promise<number>;
+}
+
+interface DatabaseLike {
+  files: TableLike<FileData>;
+  lines: TableLike<Line>;
+  csvLines: TableLike<CSVLine>;
+  originalLines: TableLike<OriginalLines>;
+  transaction(_mode: 'rw', tables: TableLike<any>[] | TableLike<any>, callback: () => Promise<void> | void): Promise<void>;
+}
+
+const hasIndexedDB = typeof indexedDB !== 'undefined';
+
+class MemoryTable<T extends { id?: number | string }> implements TableLike<T> {
+  private data: T[] = [];
+  private autoIncrement = 1;
+
+  async clear(): Promise<void> {
+    this.data = [];
+  }
+
+  async bulkAdd(items: Array<Omit<T, 'id'>>): Promise<void> {
+    for (const item of items) {
+      await this.put(item as T);
+    }
+  }
+
+  async put(item: T): Promise<void> {
+    if (typeof item.id === 'undefined' || item.id === null) {
+      (item as any).id = this.autoIncrement++;
+      this.data.push(item);
+      return;
+    }
+
+    const index = this.data.findIndex(entry => entry.id === item.id);
+    if (index === -1) {
+      this.data.push(item);
+    } else {
+      this.data[index] = item;
+    }
+  }
+
+  async get(key: any): Promise<T | undefined> {
+    return this.data.find(entry => entry.id === key);
+  }
+
+  private createQuery(field: keyof T): QueryResult<T> {
+    let offsetValue = 0;
+    let limitValue: number | null = null;
+
+    const exec = async (): Promise<T[]> => {
+      const sorted = [...this.data].sort((a, b) => {
+        const aVal = a[field];
+        const bVal = b[field];
+
+        if (typeof aVal === 'number' && typeof bVal === 'number') {
+          return aVal - bVal;
+        }
+
+        return String(aVal ?? '').localeCompare(String(bVal ?? ''));
+      });
+
+      const start = Math.max(0, offsetValue);
+      const end = limitValue != null ? start + limitValue : undefined;
+      return sorted.slice(start, end);
+    };
+
+    return {
+      offset(value: number) {
+        offsetValue = value;
+        return this;
+      },
+      limit(value: number) {
+        limitValue = value;
+        return this;
+      },
+      toArray: exec,
+    } as QueryResult<T>;
+  }
+
+  orderBy(field: keyof T): QueryResult<T> {
+    return this.createQuery(field);
+  }
+
+  where(field: keyof T): WhereResult<T> {
+    return {
+      anyOf: (values: Array<T[keyof T]>) => ({
+        toArray: async () => this.data.filter(entry => values.includes(entry[field])),
+      }),
+    };
+  }
+
+  async count(): Promise<number> {
+    return this.data.length;
+  }
+}
+
+class MemoryDatabase implements DatabaseLike {
+  files = new MemoryTable<FileData>();
+  lines = new MemoryTable<Line>();
+  csvLines = new MemoryTable<CSVLine>();
+  originalLines = new MemoryTable<OriginalLines>();
+
+  async transaction(_mode: 'rw', tables: TableLike<any>[] | TableLike<any>, callback: () => Promise<void> | void): Promise<void> {
+    await callback();
+  }
+}
+
+class DexieDatabase extends Dexie implements DatabaseLike {
   files!: Table<FileData, string>;
   lines!: Table<Line, number>;
   csvLines!: Table<CSVLine, number>;
@@ -15,13 +140,13 @@ class LineFilterDatabase extends Dexie {
 
   constructor() {
     super('LineFilterDB');
-    
+
     this.version(1).stores({
       files: 'id, name, type, uploadedAt',
       lines: '++id, lineNumber',
       csvLines: '++id, lineNumber'
     });
-    
+
     this.version(2).stores({
       files: 'id, name, type, uploadedAt',
       lines: '++id, lineNumber',
@@ -31,11 +156,18 @@ class LineFilterDatabase extends Dexie {
   }
 }
 
+function createDatabase(): DatabaseLike {
+  if (hasIndexedDB) {
+    return new DexieDatabase();
+  }
+  return new MemoryDatabase();
+}
+
 export class DatabaseService {
-  private db: LineFilterDatabase;
+  private db: DatabaseLike;
 
   constructor() {
-    this.db = new LineFilterDatabase();
+    this.db = createDatabase();
   }
 
   async storeTextLines(fileId: string, lines: string[]): Promise<void> {

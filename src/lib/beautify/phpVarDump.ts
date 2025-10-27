@@ -17,6 +17,10 @@ export function formatPhpVarDump(text: string, indentStr: string): string {
   // 2. Add proper spacing around =>
   result = result.replace(/([^\s])=>/g, '$1 =>');
   result = result.replace(/=>([^\s])/g, '=> $1');
+
+  // 2b. Ensure structured values start on their own line for readability
+  result = result.replace(/(\]\s*=>\s*)array\(/g, '$1\narray(');
+  result = result.replace(/(\]\s*=>\s*)object/g, '$1\nobject');
   
   // 3. Add space between type(param) and string literals
   result = result.replace(/(string\(\d+\))"([^"]*)"/g, '$1 "$2"');
@@ -63,19 +67,28 @@ export function formatPhpVarDump(text: string, indentStr: string): string {
     // Join lines where a key ends with => and the value starts on next line
     if (/\]\s*=>\s*$/.test(line) && i + 1 < lines.length) {
       const next = lines[i + 1].trim();
-      if (/^(int\(|string\(|float\(|bool\(|object\(|array\(\d+\)|resource\()/.test(next)) {
+      const isScalarValue = /^(int\(|string\(|float\(|bool\(|resource\()/.test(next);
+
+      if (isScalarValue) {
         line = `${line} ${next}`;
         i++; // consume next line
-        // If array(n) or object(...) is followed by '{' on the next line, attach it
-        const opensBlock = /array\(\d+\)\s*$/.test(line) || /object\([^)]*\)\s*#?\d*\s*\(\d+\)\s*$/.test(line);
-        if (opensBlock && i + 1 < lines.length && lines[i + 1].trim() === '{') {
-          line += ' {';
-          i++; // consume '{'
-          formattedLines.push(indentStr.repeat(depth) + line);
-          depth++;
-          continue;
-        }
       }
+    }
+
+    if (/array\(\d+\)\s*$/.test(line) && i + 1 < lines.length && lines[i + 1].trim() === '{') {
+      line = `${line} {`;
+      i++;
+      formattedLines.push(indentStr.repeat(depth) + line);
+      depth++;
+      continue;
+    }
+
+    if (/object\([^)]*\)\s*#?\d*\s*\(\d+\)\s*$/.test(line) && i + 1 < lines.length && lines[i + 1].trim() === '{') {
+      line = `${line} {`;
+      i++;
+      formattedLines.push(indentStr.repeat(depth) + line);
+      depth++;
+      continue;
     }
 
     // Handle regular lines

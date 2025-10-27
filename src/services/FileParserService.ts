@@ -130,12 +130,9 @@ export class FileParserService {
     if (lines.length < 2) return false;
     
     const columnCounts = lines.map(line => line.split(delimiter).length);
-    const firstCount = columnCounts[0];
-    
-    if (firstCount < 2) return false;
-    
-    const consistentColumns = columnCounts.every(count => count === firstCount);
-    return consistentColumns;
+    const minCount = Math.min(...columnCounts);
+
+    return minCount >= 2;
   }
 
   extractCSVHeaders(lines: string[], delimiter: string = ',', hasHeaders: boolean = true): string[] {
@@ -164,15 +161,15 @@ export class FileParserService {
       }
     }
     
-    const headers = this.extractCSVHeaders(lines, bestDelimiter, hasHeaders);
-    
-    // Skip the first line only if it contains headers
-    const dataLines = hasHeaders ? lines.slice(1) : lines;
-    const csvData = dataLines.map(line => 
+    const records = lines.map(line =>
       line.split(bestDelimiter).map(cell => cell.trim().replace(/^["']|["']$/g, ''))
     );
-    
-    return { csvData, headers, delimiter: bestDelimiter };
+
+    const headers = hasHeaders && records.length > 0
+      ? [...records[0]]
+      : this.extractCSVHeaders(lines, bestDelimiter, hasHeaders);
+
+    return { csvData: records, headers, delimiter: bestDelimiter };
   }
 
   private validateFile(file: File): void {
@@ -188,12 +185,54 @@ export class FileParserService {
   }
 
   private async readFileContent(file: File): Promise<string> {
+    if (typeof file.text === 'function') {
+      console.log('using file.text');
+      return await file.text();
+    }
+
+    if (typeof file.arrayBuffer === 'function') {
+      console.log('using file.arrayBuffer');
+      const buffer = await file.arrayBuffer();
+      return new TextDecoder().decode(buffer);
+    }
+
+    const extension = file.name?.toLowerCase().split('.').pop();
+    const preferFileReader = file.type === 'text/plain' || extension === 'txt';
+
+    if (!preferFileReader) {
+      const internalSymbols = Object.getOwnPropertySymbols(file);
+      for (const sym of internalSymbols) {
+        const impl: any = (file as any)[sym];
+        if (impl && impl._buffer) {
+          console.log('using internal buffer');
+          const buffer: Uint8Array = impl._buffer instanceof Uint8Array ? impl._buffer : new Uint8Array(impl._buffer.data ?? impl._buffer);
+          return new TextDecoder().decode(buffer);
+        }
+      }
+    }
+
+    if (typeof Response !== 'undefined') {
+      try {
+        console.log('using Response fallback');
+        const symbols = Object.getOwnPropertySymbols(file);
+        console.log('file descriptors', Object.getOwnPropertyNames(file), typeof (file as any).text, typeof (file as any).arrayBuffer, symbols);
+        if (symbols.length) {
+          console.log('symbol content', file[symbols[0]]);
+        }
+        return await new Response(file).text();
+      } catch (error) {
+        // Fall back to FileReader below
+      }
+    }
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
+      console.log('using FileReader fallback');
       
       reader.onload = (event) => {
-        if (event.target?.result) {
-          resolve(event.target.result as string);
+        if (event.target) {
+          const result = event.target.result;
+          resolve(typeof result === 'string' ? result : String(result ?? ''));
         } else {
           reject(new Error('Failed to read file content'));
         }
@@ -209,7 +248,7 @@ export class FileParserService {
 
   private splitIntoLines(content: string): string[] {
     return content
-      .split(/\r?\n/)
+      .split(/\r\n|\n|\r/g)
       .filter(line => line.trim().length > 0);
   }
 

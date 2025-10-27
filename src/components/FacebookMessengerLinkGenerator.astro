@@ -1,0 +1,134 @@
+---
+---
+
+<section class="mx-auto flex w-full max-w-2xl flex-col gap-6 rounded-xl bg-white p-8 shadow-lg border border-gray-200">
+  <header class="space-y-2">
+    <h2 class="text-xl font-semibold text-gray-900">Create Messenger Chat Link from Facebook Profile</h2>
+    <p class="text-sm text-gray-600">
+      Paste a Facebook URL below to get your m.me chat link
+    </p>
+  </header>
+
+  <form data-role="form" class="flex flex-col gap-4">
+    <label class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-gray-800">Facebook URL</span>
+      <input
+        name="facebookUrl"
+        type="url"
+        required
+        placeholder="https://www.facebook.com/username"
+        class="w-full rounded-md border border-gray-300 px-3 py-2 text-base shadow-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+      />
+    </label>
+    <button
+      type="submit"
+      class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-white shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+    >
+      Generate Link
+    </button>
+  </form>
+
+  <div data-role="status" class="hidden rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
+
+  <div data-role="result" class="hidden flex-col gap-3 rounded-md border border-green-200 bg-green-50 px-4 py-4 text-sm text-gray-800 shadow-sm">
+    <div class="flex items-start gap-2">
+      <span class="text-xl">✅</span>
+      <div class="flex-1 space-y-2">
+        <p class="font-semibold text-green-900">Your Messenger link:</p>
+        <a data-role="link" class="block break-all rounded bg-white px-3 py-2 text-base font-medium text-primary underline" target="_blank" rel="noopener noreferrer"></a>
+        <p class="text-xs text-gray-600">
+          Click the link to open Messenger now, or copy it to save and share with others.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { generateMessengerLink } from '/src/utils/facebook.ts';
+
+  // Ensure DOM is ready before executing
+  function init() {
+    const form = document.querySelector('[data-role="form"]');
+    const statusEl = document.querySelector('[data-role="status"]');
+    const resultEl = document.querySelector('[data-role="result"]');
+    const linkEl = document.querySelector('[data-role="link"]');
+    const inputEl = document.querySelector('[name="facebookUrl"]');
+
+    if (!form || !statusEl || !resultEl || !linkEl || !inputEl) {
+      console.warn('Missing required elements for Messenger link generator.');
+      return;
+    }
+
+    const hideStatus = () => {
+      statusEl.classList.add('hidden');
+      statusEl.textContent = '';
+    };
+
+    const showStatus = (message) => {
+      statusEl.textContent = message;
+      statusEl.classList.remove('hidden');
+    };
+
+    const showResult = (messengerUrl) => {
+      linkEl.textContent = messengerUrl;
+      linkEl.href = messengerUrl;
+      resultEl.classList.remove('hidden');
+    };
+
+    const hideResult = () => {
+      resultEl.classList.add('hidden');
+    };
+
+    const updateUrlParameter = (facebookUrl) => {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('facebookUrl', facebookUrl);
+        window.history.replaceState({}, '', url.toString());
+        console.log('URL parameter updated:', url.toString());
+      } catch (error) {
+        console.error('Failed to update URL parameter:', error);
+      }
+    };
+
+    const processConversion = (url) => {
+      hideStatus();
+      hideResult();
+
+      try {
+        const { messengerUrl } = generateMessengerLink(url);
+        showResult(messengerUrl);
+        updateUrlParameter(url);
+      } catch (error) {
+        console.error(error);
+        showStatus(error instanceof Error ? error.message : 'An error occurred. Please try again.');
+      }
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const url = (formData.get('facebookUrl') ?? '').toString();
+
+      processConversion(url);
+    });
+
+    // Auto-fill and auto-convert on page load if query parameter is present
+    const urlParams = new URLSearchParams(window.location.search);
+    const facebookUrlParam = urlParams.get('facebookUrl');
+
+    if (facebookUrlParam && facebookUrlParam.trim()) {
+      console.log('Found facebookUrl parameter, auto-filling and converting:', facebookUrlParam);
+      inputEl.value = facebookUrlParam;
+      processConversion(facebookUrlParam);
+    }
+  }
+
+  // Run init when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

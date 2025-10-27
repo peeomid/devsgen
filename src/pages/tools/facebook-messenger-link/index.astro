@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FacebookMessengerLinkGenerator from '../../../components/FacebookMessengerLinkGenerator.astro';
+
+const title = 'Create Messenger Chat Link from Facebook Profile | Free Tool';
+const description = 'Turn any Facebook profile into a direct Messenger chat link (m.me). Perfect for Instagram bios, business contact pages, or sharing with friends. Instant, free, and works in your browser.';
+const pageUrl = '/tools/facebook-messenger-link';
+---
+
+<BaseLayout title={title} description={description} pageUrl={pageUrl}>
+  <div class="max-w-7xl mx-auto">
+    <nav class="flex mb-4 text-sm text-gray-500" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2">
+        <a href="/" class="hover:text-primary">Home</a>
+        <span>›</span>
+        <a href="/tools" class="hover:text-primary">Tools</a>
+        <span>›</span>
+        <span class="text-gray-900">Facebook Messenger Link Generator</span>
+      </div>
+    </nav>
+
+    <div class="bg-gradient-to-br from-gray-50 via-white to-blue-50 py-16 rounded-xl mb-12">
+      <div class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6">
+        <div class="space-y-3 text-center">
+          <p class="text-sm uppercase tracking-wide text-primary">Free Tool</p>
+          <h1 class="text-3xl font-bold text-gray-900">Create Messenger Chat Link from Facebook Profile</h1>
+          <p class="mx-auto max-w-3xl text-base text-gray-600">
+            Paste a Facebook URL, get an instant Messenger link to open chats directly
+          </p>
+        </div>
+        <FacebookMessengerLinkGenerator />
+      </div>
+    </div>
+
+    <section class="mb-12">
+      <article class="space-y-4">
+        <h2 class="text-2xl font-semibold text-gray-900">Why Use a Messenger Link?</h2>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div class="mb-2 text-2xl">✅</div>
+            <h3 class="mb-2 font-semibold text-gray-900">Open Chats Directly</h3>
+            <p class="text-sm text-gray-600">
+              m.me links open Messenger app instantly, no App Store redirects or extra clicks
+            </p>
+          </div>
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div class="mb-2 text-2xl">⚡</div>
+            <h3 class="mb-2 font-semibold text-gray-900">Quick & Easy</h3>
+            <p class="text-sm text-gray-600">
+              Just paste a Facebook URL and get your chat link in seconds - no signup or login needed
+            </p>
+          </div>
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div class="mb-2 text-2xl">🔒</div>
+            <h3 class="mb-2 font-semibold text-gray-900">Safe & Private</h3>
+            <p class="text-sm text-gray-600">
+              Everything processes in your browser. We don't save or share your information
+            </p>
+          </div>
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div class="mb-2 text-2xl">📱</div>
+            <h3 class="mb-2 font-semibold text-gray-900">Works on Any Device</h3>
+            <p class="text-sm text-gray-600">
+              Compatible with iPhone, Android, desktop - opens Messenger wherever it's installed
+            </p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="mb-12">
+      <article class="space-y-4">
+        <h2 class="text-2xl font-semibold text-gray-900">How to Use</h2>
+        <div class="space-y-3">
+          <div class="flex gap-3">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">1</div>
+            <div>
+              <h3 class="font-semibold text-gray-900">Copy the Facebook URL</h3>
+              <p class="text-sm text-gray-600">
+                Go to the profile or page you want to chat with, copy the link from your browser
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">2</div>
+            <div>
+              <h3 class="font-semibold text-gray-900">Generate Your Chat Link</h3>
+              <p class="text-sm text-gray-600">
+                Paste the URL above and click "Generate Link" to get your m.me link
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">3</div>
+            <div>
+              <h3 class="font-semibold text-gray-900">Use Your Link</h3>
+              <p class="text-sm text-gray-600">
+                Click to open Messenger now, or save/share the link for later
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="mb-12">
+      <article class="space-y-4">
+        <h2 class="text-2xl font-semibold text-gray-900">What Can You Do with a Messenger Chat Link?</h2>
+        <ul class="space-y-2 text-base text-gray-600">
+          <li class="flex gap-2">
+            <span class="text-primary">•</span>
+            <span>Save links to frequently contacted friends or family for quick access</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="text-primary">•</span>
+            <span>Share your link so others can message you easily without Facebook</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="text-primary">•</span>
+            <span>Add to Instagram, TikTok, or Twitter bio for follower contact</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="text-primary">•</span>
+            <span>Put on your website or online store for customer support</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="text-primary">•</span>
+            <span>Share in group chats or emails when coordinating events</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="mb-12">
+      <article class="space-y-3">
+        <h2 class="text-2xl font-semibold text-gray-900">Frequently Asked Questions</h2>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-600">
+          <summary class="cursor-pointer font-semibold text-gray-800">Why do I need a Messenger link? Can't I just share the Facebook profile?</summary>
+          <p class="mt-2 text-sm leading-relaxed">
+            When someone clicks "Message" on a Facebook profile (especially on mobile), it often redirects to the App Store instead of opening your installed Messenger app. A Messenger link (m.me) opens the chat directly in your app, saving time and avoiding frustration.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-600">
+          <summary class="cursor-pointer font-semibold text-gray-800">What is an m.me link?</summary>
+          <p class="mt-2 text-sm leading-relaxed">
+            m.me is Facebook's official short link for Messenger. When you open an m.me link, it automatically launches the Messenger app (or opens Messenger on the web if you don't have the app installed) and starts a chat with that person.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-600">
+          <summary class="cursor-pointer font-semibold text-gray-800">Is this safe to use?</summary>
+          <p class="mt-2 text-sm leading-relaxed">
+            Yes, completely safe. m.me is an official Facebook domain. This tool only converts the URL format - it doesn't collect, store, or share any of your information. Everything happens in your browser.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-600">
+          <summary class="cursor-pointer font-semibold text-gray-800">Will this work on my phone?</summary>
+          <p class="mt-2 text-sm leading-relaxed">
+            Yes! Works on iPhone, Android, and any device. If you have Messenger installed, the link opens the app. If not, it opens Messenger in your web browser.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-600">
+          <summary class="cursor-pointer font-semibold text-gray-800">Can I use this for Facebook business pages too?</summary>
+          <p class="mt-2 text-sm leading-relaxed">
+            Absolutely! Works for both personal profiles and business pages. Just paste the Facebook URL and you'll get the corresponding Messenger link.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-600">
+          <summary class="cursor-pointer font-semibold text-gray-800">Why isn't my Messenger link working?</summary>
+          <p class="mt-2 text-sm leading-relaxed">
+            Try opening the link in your default browser (Safari, Chrome) instead of within another app's browser. Also, check if the Facebook account allows messages from people who aren't friends.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-600">
+          <summary class="cursor-pointer font-semibold text-gray-800">Can I share the generated link with others?</summary>
+          <p class="mt-2 text-sm leading-relaxed">
+            Yes! That's one of the main uses. Share the m.me link anywhere - Instagram bio, website, email, etc. When someone clicks it, they'll be able to message you on Messenger.
+          </p>
+        </details>
+      </article>
+    </section>
+  </div>
+</BaseLayout>
