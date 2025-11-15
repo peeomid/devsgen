@@ -1,4 +1,91 @@
-import { generateMessengerLink } from '../utils/facebook';
+// Utility: Generate messenger link from Facebook URL
+function generateMessengerLink(rawUrl) {
+  if (typeof rawUrl !== 'string') {
+    throw new TypeError('Please enter a Facebook URL.');
+  }
+
+  const trimmed = rawUrl.trim();
+  if (trimmed.length === 0) {
+    throw new TypeError('Please enter a Facebook URL.');
+  }
+
+  const normalised = ensureProtocol(trimmed);
+  const parsed = parseFacebookUrl(normalised);
+
+  const identifier = extractIdentifier(parsed);
+  if (!identifier) {
+    throw new Error('Could not extract Facebook identifier from this URL.');
+  }
+
+  return {
+    identifier,
+    messengerUrl: `https://m.me/${encodeURIComponent(identifier)}`,
+  };
+}
+
+function ensureProtocol(url) {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
+
+function parseFacebookUrl(url) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new TypeError('Invalid URL. Please check and try again.');
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+  const allowedHosts = new Set([
+    'facebook.com',
+    'www.facebook.com',
+    'm.facebook.com',
+    'web.facebook.com',
+  ]);
+
+  if (!allowedHosts.has(hostname)) {
+    throw new TypeError('This URL does not belong to Facebook.');
+  }
+
+  return parsed;
+}
+
+function extractIdentifier(parsed) {
+  const pathname = parsed.pathname;
+
+  // Case A: profile.php?id=<numeric>
+  if (pathname.toLowerCase().startsWith('/profile.php')) {
+    const id = parsed.searchParams.get('id');
+    if (id && id.trim()) {
+      return cleanIdentifier(id);
+    }
+  }
+
+  // Case B: /username/ style
+  const segments = pathname
+    .split('/')
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  if (segments.length === 0) {
+    return null;
+  }
+
+  // Ignore leading "pages" path as it usually follows /pages/<title>/<id>
+  if (segments[0].toLowerCase() === 'pages') {
+    const potentialId = segments[2]; // pages/{title}/{id}
+    if (potentialId) {
+      return cleanIdentifier(potentialId);
+    }
+    return null;
+  }
+
+  return cleanIdentifier(segments[0]);
+}
+
+function cleanIdentifier(identifier) {
+  return identifier.replace(/[?#].*$/, '');
+}
 
 // Ensure DOM is ready before executing
 function init() {
