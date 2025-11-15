@@ -9,7 +9,7 @@ Generate Link
 </button> </form> <div data-role="status" class="hidden rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div> <div data-role="result" class="hidden flex-col gap-3 rounded-md border border-green-200 bg-green-50 px-4 py-4 text-sm text-gray-800 shadow-sm"> <div class="flex items-start gap-2"> <span class="text-xl">✅</span> <div class="flex-1 space-y-2"> <p class="font-semibold text-green-900">Your Messenger link:</p> <a data-role="link" class="block break-all rounded bg-white px-3 py-2 text-base font-medium text-primary underline" target="_blank" rel="noopener noreferrer"></a> <p class="text-xs text-gray-600">
 Click the link to open Messenger now, or copy it to save and share with others.
 </p> </div> </div> </div> </section> <script type="module">
-  import { generateMessengerLink } from '~/utils/facebook';
+  import { generateMessengerLink } from '../utils/facebook';
 
   // Ensure DOM is ready before executing
   function init() {
