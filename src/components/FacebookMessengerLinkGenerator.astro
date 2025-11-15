@@ -1,4 +1,5 @@
 ---
+import messengerLinkScript from '../scripts/messengerLinkGenerator.js?raw';
 ---
 
 <section class="mx-auto flex w-full max-w-2xl flex-col gap-6 rounded-xl bg-white p-8 shadow-lg border border-gray-200">
@@ -44,4 +45,4 @@
   </div>
 </section>
 
-<script src="../scripts/messengerLinkGenerator.js"></script>
+<script is:inline type="module" set:html={messengerLinkScript}></script>
