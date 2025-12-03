@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import GoogleSheetTabDownloader from '../../../components/GoogleSheetTabDownloader.astro';
+
+const title = 'Google Sheets Single Tab Download Link Generator | Export One Sheet';
+const description = 'Paste a Google Sheets tab URL (with gid) and generate a direct download link for that one tab in CSV, TSV, XLSX, ODS, PDF, or HTML.';
+const pageUrl = '/tools/google-sheet-tab-download';
+---
+
+<BaseLayout title={title} description={description} pageUrl={pageUrl}>
+  <div class="max-w-7xl mx-auto">
+    <nav class="flex mb-4 text-sm text-gray-500" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2">
+        <a href="/" class="hover:text-primary">Home</a>
+        <span>›</span>
+        <a href="/tools" class="hover:text-primary">Tools</a>
+        <span>›</span>
+        <span class="text-gray-900">Google Sheet Tab Download Link</span>
+      </div>
+    </nav>
+
+    <div class="bg-gradient-to-br from-gray-50 via-white to-blue-50 py-16 rounded-xl mb-12">
+      <div class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6">
+        <div class="space-y-3 text-center">
+          <p class="text-sm uppercase tracking-wide text-primary">Free Tool</p>
+          <h1 class="text-3xl font-bold text-gray-900">Generate a Download Link for One Google Sheets Tab</h1>
+          <p class="mx-auto max-w-3xl text-base text-gray-600">
+            Use the tab URL that includes <code>gid</code>, pick a format, and get a direct export link for that tab only.
+          </p>
+        </div>
+        <GoogleSheetTabDownloader />
+      </div>
+    </div>
+
+    <section class="mb-12">
+      <article class="space-y-4">
+        <h2 class="text-2xl font-semibold text-gray-900">How to use this tool</h2>
+        <div class="space-y-3">
+          <div class="flex gap-3">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">1</div>
+            <div>
+              <h3 class="font-semibold text-gray-900">Open the tab you want</h3>
+              <p class="text-sm text-gray-600">
+                Click the specific tab inside your Google Sheet. Make sure the URL shows <code>gid=</code> for that tab.
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">2</div>
+            <div>
+              <h3 class="font-semibold text-gray-900">Copy the URL</h3>
+              <p class="text-sm text-gray-600">
+                Copy the browser URL while that tab is active, then paste it in the tool above.
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">3</div>
+            <div>
+              <h3 class="font-semibold text-gray-900">Pick a format and generate</h3>
+              <p class="text-sm text-gray-600">
+                Choose CSV, TSV, XLSX, ODS, PDF, HTML, or ZIP. The generated link exports only that tab.
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="mb-12">
+      <article class="space-y-4">
+        <h2 class="text-2xl font-semibold text-gray-900">Supported formats</h2>
+        <p class="text-sm text-gray-600">
+          You can export a single tab as CSV, TSV, Excel (.xlsx), OpenDocument (.ods), PDF, HTML, or zipped HTML. PDF exports use Google&apos;s defaults; adjust in the Sheet if you need layout tweaks.
+        </p>
+      </article>
+    </section>
+
+    <section class="mb-12">
+      <article class="space-y-4">
+        <h2 class="text-2xl font-semibold text-gray-900">Notes</h2>
+        <ul class="space-y-2 text-base text-gray-600">
+          <li class="flex gap-2">
+            <span class="text-primary">•</span>
+            <span>Anyone using the generated link still needs view permission to the sheet.</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="text-primary">•</span>
+            <span>The link uses the tab&rsquo;s <code>gid</code>, so it always points to that specific tab.</span>
+          </li>
+          <li class="flex gap-2">
+            <span class="text-primary">•</span>
+            <span>No data leaves your browser; everything is generated client-side.</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+  </div>
+</BaseLayout>
