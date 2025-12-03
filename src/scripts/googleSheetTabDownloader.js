@@ -70,8 +70,9 @@ function init() {
   const statusEl = document.querySelector('[data-role="sheet-status"]');
   const resultEl = document.querySelector('[data-role="sheet-result"]');
   const linkEl = document.querySelector('[data-role="sheet-link"]');
+  const copyBtn = document.querySelector('[data-role="sheet-copy"]');
 
-  if (!form || !inputEl || !formatEl || !statusEl || !resultEl || !linkEl) {
+  if (!form || !inputEl || !formatEl || !statusEl || !resultEl || !linkEl || !copyBtn) {
     console.warn('Missing required elements for Google Sheet tab downloader.');
     return;
   }
@@ -121,12 +122,36 @@ function init() {
     }
   };
 
+  const copyLink = async () => {
+    hideStatus();
+    if (!linkEl.href) {
+      showStatus('Generate a link first.');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(linkEl.href);
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      copyBtn.disabled = true;
+      setTimeout(() => {
+        copyBtn.textContent = originalText;
+        copyBtn.disabled = false;
+      }, 1500);
+    } catch (error) {
+      console.error('Copy failed', error);
+      showStatus('Could not copy. Please copy manually.');
+    }
+  };
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const sheetUrl = inputEl.value;
     const exportFormat = formatEl.value;
     generate(sheetUrl, exportFormat);
   });
+
+  copyBtn.addEventListener('click', copyLink);
 
   // Auto-fill from query parameters
   const params = new URLSearchParams(window.location.search);

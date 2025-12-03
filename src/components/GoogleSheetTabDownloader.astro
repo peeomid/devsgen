@@ -63,7 +63,16 @@ import googleSheetScript from '../scripts/googleSheetTabDownloader.js?raw';
       <span class="text-xl">✅</span>
       <div class="flex-1 space-y-2">
         <p class="font-semibold text-green-900">Direct download link for this tab:</p>
-        <a data-role="sheet-link" class="block break-all rounded bg-white px-3 py-2 text-base font-medium text-primary underline" target="_blank" rel="noopener noreferrer"></a>
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <a data-role="sheet-link" class="block break-all rounded bg-white px-3 py-2 text-base font-medium text-primary underline" target="_blank" rel="noopener noreferrer"></a>
+          <button
+            type="button"
+            data-role="sheet-copy"
+            class="inline-flex items-center justify-center rounded-md bg-emerald-600 px-3 py-2 text-xs font-medium text-white shadow hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+          >
+            Copy link
+          </button>
+        </div>
         <p class="text-xs text-gray-600">
           This link only exports the active tab (via its <code>gid</code>). Anyone who opens it needs view access to the sheet.
         </p>
