@@ -5,9 +5,9 @@ import googleSheetScript from '../scripts/googleSheetTabDownloader.js?raw';
 <section class="mx-auto flex w-full max-w-3xl flex-col gap-8 rounded-xl bg-white p-8 shadow-lg border border-gray-200">
   <header class="space-y-3">
     <p class="text-xs uppercase tracking-wide text-primary font-semibold">Google Sheets</p>
-    <h2 class="text-2xl font-semibold text-gray-900">Single-Tab Download Link Generator</h2>
+    <h2 class="text-2xl font-semibold text-gray-900">Download One Tab (Direct Export Link)</h2>
     <p class="text-sm text-gray-600">
-      Paste the tab URL from your Google Sheet, pick a format, and get a direct download link for that tab only.
+      Paste the tab URL with <code>gid</code>, choose CSV, Excel, PDF, etc., and instantly get a direct download link for that single sheet.
     </p>
   </header>
 
@@ -15,8 +15,8 @@ import googleSheetScript from '../scripts/googleSheetTabDownloader.js?raw';
     <h3 class="font-semibold text-blue-900">Before you paste:</h3>
     <ul class="list-disc pl-5 space-y-1">
       <li>Open your Google Sheet and click the tab you want to download.</li>
-      <li>Copy the URL while that tab is active (URL must include <code>gid=</code>).</li>
-      <li>Paste it below, choose a format, and generate the link.</li>
+      <li>Copy the URL while that tab is active (look for <code>gid=</code> in the URL).</li>
+      <li>Paste it below, choose a format, and generate the link—only that tab will export.</li>
     </ul>
   </div>
 

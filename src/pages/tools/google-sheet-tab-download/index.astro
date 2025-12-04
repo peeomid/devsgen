@@ -2,8 +2,8 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import GoogleSheetTabDownloader from '../../../components/GoogleSheetTabDownloader.astro';
 
-const title = 'Google Sheets Single Tab Download Link Generator | Export One Sheet';
-const description = 'Paste a Google Sheets tab URL (with gid) and generate a direct download link for that one tab in CSV, TSV, XLSX, ODS, PDF, or HTML.';
+const title = 'Download One Tab from Google Sheets | Single Sheet Export Link Generator';
+const description = 'Paste a Google Sheets tab URL (with gid) and generate a direct download link for that sheet only. Export one tab as CSV, TSV, Excel, ODS, PDF, or HTML—no add-ons needed.';
 const pageUrl = '/tools/google-sheet-tab-download';
 ---
 
@@ -23,9 +23,9 @@ const pageUrl = '/tools/google-sheet-tab-download';
       <div class="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6">
         <div class="space-y-3 text-center">
           <p class="text-sm uppercase tracking-wide text-primary">Free Tool</p>
-          <h1 class="text-3xl font-bold text-gray-900">Generate a Download Link for One Google Sheets Tab</h1>
+          <h1 class="text-3xl font-bold text-gray-900">Download a Single Sheet from Google Sheets (One Tab Only)</h1>
           <p class="mx-auto max-w-3xl text-base text-gray-600">
-            Use the tab URL that includes <code>gid</code>, pick a format, and get a direct export link for that tab only.
+            Paste the tab URL that contains <code>gid</code>, pick CSV, TSV, Excel, ODS, PDF, or HTML, and get a direct export link that downloads only that tab—no add-ons or scripts.
           </p>
         </div>
         <GoogleSheetTabDownloader />
@@ -34,32 +34,32 @@ const pageUrl = '/tools/google-sheet-tab-download';
 
     <section class="mb-12">
       <article class="space-y-4">
-        <h2 class="text-2xl font-semibold text-gray-900">How to use this tool</h2>
+        <h2 class="text-2xl font-semibold text-gray-900">How to download a single tab (gid method)</h2>
         <div class="space-y-3">
           <div class="flex gap-3">
             <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">1</div>
             <div>
-              <h3 class="font-semibold text-gray-900">Open the tab you want</h3>
+              <h3 class="font-semibold text-gray-900">Open the tab you need to export</h3>
               <p class="text-sm text-gray-600">
-                Click the specific tab inside your Google Sheet. Make sure the URL shows <code>gid=</code> for that tab.
+                Click the specific tab inside your Google Sheet. The URL must show <code>gid=</code> for that tab.
               </p>
             </div>
           </div>
           <div class="flex gap-3">
             <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">2</div>
             <div>
-              <h3 class="font-semibold text-gray-900">Copy the URL</h3>
+              <h3 class="font-semibold text-gray-900">Copy that tab’s URL</h3>
               <p class="text-sm text-gray-600">
-                Copy the browser URL while that tab is active, then paste it in the tool above.
+                Copy the browser URL while that tab is active (it should look like <code>#gid=123456789</code>), then paste it in the tool above.
               </p>
             </div>
           </div>
           <div class="flex gap-3">
             <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-primary">3</div>
             <div>
-              <h3 class="font-semibold text-gray-900">Pick a format and generate</h3>
+              <h3 class="font-semibold text-gray-900">Pick a format and generate the link</h3>
               <p class="text-sm text-gray-600">
-                Choose CSV, TSV, XLSX, ODS, PDF, HTML, or ZIP. The generated link exports only that tab.
+                Choose CSV, TSV, XLSX, ODS, PDF, HTML, or ZIP. The generated link exports only that single tab, not the whole workbook.
               </p>
             </div>
           </div>
@@ -69,9 +69,9 @@ const pageUrl = '/tools/google-sheet-tab-download';
 
     <section class="mb-12">
       <article class="space-y-4">
-        <h2 class="text-2xl font-semibold text-gray-900">Supported formats</h2>
+        <h2 class="text-2xl font-semibold text-gray-900">Export one sheet in the format you need</h2>
         <p class="text-sm text-gray-600">
-          You can export a single tab as CSV, TSV, Excel (.xlsx), OpenDocument (.ods), PDF, HTML, or zipped HTML. PDF exports use Google&apos;s defaults; adjust in the Sheet if you need layout tweaks.
+          Export a single tab as CSV, TSV, Excel (.xlsx), OpenDocument (.ods), PDF, HTML, or zipped HTML. PDF exports use Google&apos;s defaults; adjust page settings in Sheets if you need layout tweaks before downloading.
         </p>
       </article>
     </section>
@@ -93,6 +93,36 @@ const pageUrl = '/tools/google-sheet-tab-download';
             <span>No data leaves your browser; everything is generated client-side.</span>
           </li>
         </ul>
+      </article>
+    </section>
+
+    <section class="mb-12">
+      <article class="space-y-4">
+        <h2 class="text-2xl font-semibold text-gray-900">FAQ: exporting one tab from Google Sheets</h2>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-700">
+          <summary class="cursor-pointer font-semibold text-gray-800">How do I download just one sheet instead of the whole Google Sheets file?</summary>
+          <p class="mt-2 text-sm leading-relaxed text-gray-600">
+            Open the tab you need, copy the URL that contains <code>gid=</code>, paste it above, choose a format, and generate the link. The link hits Google&apos;s official export endpoint for that gid only.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-700">
+          <summary class="cursor-pointer font-semibold text-gray-800">Where do I find the gid for my tab?</summary>
+          <p class="mt-2 text-sm leading-relaxed text-gray-600">
+            Click the tab at the bottom of the sheet. The browser URL will end with something like <code>#gid=123456789</code>. That number is the gid for the current tab.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-700">
+          <summary class="cursor-pointer font-semibold text-gray-800">Can I export one tab as CSV, Excel, or PDF?</summary>
+          <p class="mt-2 text-sm leading-relaxed text-gray-600">
+            Yes. Pick CSV, TSV, XLSX, ODS, PDF, HTML, or ZIP in the dropdown. The link will download only that tab in the chosen format.
+          </p>
+        </details>
+        <details class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-base text-gray-700">
+          <summary class="cursor-pointer font-semibold text-gray-800">Do viewers need permission to use the generated link?</summary>
+          <p class="mt-2 text-sm leading-relaxed text-gray-600">
+            Yes. The export link respects Google Sheets permissions. Anyone who opens it must have view access to the file.
+          </p>
+        </details>
       </article>
     </section>
   </div>
